@@ -143,26 +143,37 @@ async function sendPushNotification(notiToken, eventName, uid, eventId) {
     console.error("Error sending push notification:", error);
   }
 }
-async function createNotificationUserStore(eventName, eventId, uid){
+async function createNotificationUserStore(eventName, eventId, uid) {
   const notificationsCollection = collection(db, 'notifications');
   const notificationData = {
-    description: "an event you are signed up for has been updated: "+ eventName,
+    description: "an event you are signed up for has been updated: " + eventName,
     date: Date.now()
   };
-  const notiDocRef = await addDoc(notificationsCollection, notificationData);
-  var userData = await getDoc(doc(db, "users", uid)).data().notifications
-  userData.push(notiDocRef.id)
-  updateDoc(doc(db, "users", uid), userData)
-    .then(docRef => {
+
+  try {
+    const notiDocRef = await addDoc(notificationsCollection, notificationData);
+    
+    const userDocRef = doc(db, "users", uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      let userData = userDocSnap.data();
+      let notifications = userData.notifications || [];
+      notifications.push(notiDocRef.id);
+      
+      await updateDoc(userDocRef, {
+        notifications: notifications
+      });
+      
       console.log("A New Document Field has been added to an existing document");
-  })
-  .catch(error => {
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
     console.log(error);
-  })
-
-
-
+  }
 }
+
 const getShiftData = async (shiftList) => {
   try {
 
