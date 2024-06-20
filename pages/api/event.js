@@ -71,7 +71,7 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       category: category
     };
     const eventRef = doc(db, "events", eventId);
-    await getUserNotifTokens((await getDoc(eventRef)).data().shifts, title);
+    await getUserNotifTokens((await getDoc(eventRef)).data().shifts, title, eventId);
     await updateDoc(eventRef, data);
 
   } catch (error) {
@@ -80,7 +80,7 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
   }
 };
 
-const getUserNotifTokens = async (shiftIds, title) => {
+const getUserNotifTokens = async (shiftIds, title, eventId) => {
   try {
     for (const shiftId of shiftIds) {
       const shiftDocRef = doc(db, "shifts", shiftId);
@@ -106,7 +106,7 @@ const getUserNotifTokens = async (shiftIds, title) => {
 
           const userData = userDocSnap.data();
           const notifToken = userData.notifToken;
-          sendPushNotification(notifToken, title)
+          sendPushNotification(notifToken, title, uid, eventId)
           console.log(`User ID: ${uid}, Notification Token: ${notifToken}`);
         }
       }
@@ -115,7 +115,7 @@ const getUserNotifTokens = async (shiftIds, title) => {
     console.error("Error getting user notification tokens: ", error);
   }
 };
-async function sendPushNotification(notiToken, eventName) {
+async function sendPushNotification(notiToken, eventName, uid, eventId) {
   const url = "https://exp.host/--/api/v2/push/send";
   const payload = {
     to: notiToken,
@@ -136,12 +136,32 @@ async function sendPushNotification(notiToken, eventName) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
+    createNotificationUserStore(eventName, eventId, uid)
     const data = await response.json();
     console.log("Push notification sent successfully:", data);
   } catch (error) {
     console.error("Error sending push notification:", error);
   }
+}
+async function createNotificationUserStore(eventName, eventId, uid){
+  const notificationsCollection = collection(db, 'notifications');
+  const notificationData = {
+    description: "an event you are signed up for has been updated: "+ eventName,
+    date: Date.now()
+  };
+  const notiDocRef = await addDoc(notificationsCollection, notificationData);
+  var userData = await getDoc(doc(db, "users", uid)).data().notifications
+  userData.push(notiDocRef.id)
+  updateDoc(doc(db, "users", uid), userData)
+    .then(docRef => {
+      console.log("A New Document Field has been added to an existing document");
+  })
+  .catch(error => {
+    console.log(error);
+  })
+
+
+
 }
 const getShiftData = async (shiftList) => {
   try {
