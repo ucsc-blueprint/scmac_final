@@ -10,7 +10,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { Octicons, Entypo } from '@expo/vector-icons';
 import OptionsMenu from "react-native-options-menu";
-import { createEvent } from '../api/event';
+import { createEvent, sendPushNotification } from '../api/event';
 
 const Tab = createMaterialTopTabNavigator();
 var nav = null;
@@ -392,6 +392,8 @@ function Availability() {
     fetchData();
  }, [])
 
+ const myIcon = (<Entypo name="dots-three-horizontal" size={24} color="black" />);
+
  const renderItem = item => {
   // console.log(shiftsData);
   if (item) {
@@ -399,8 +401,25 @@ function Availability() {
   <View key={item.item.id}>
     <View style={styles.container2}>
       <Text style={styles.text}>Time Slot {item.index + 1}:</Text>
-      <TouchableOpacity style={styles.reminderButton}>
-        <Text style={styles.reminderButtonText}>Send Reminder</Text>
+      <TouchableOpacity style={styles.reminderButton} onPress={() => {
+          Alert.prompt(
+            'Custom Notification',
+            'Enter your custom notification text for the people in the shift:',
+            [
+              {text: 'Cancel', style: 'destructive', onPress: () => {}},
+              {
+                text: 'Submit',
+                onPress: (text) => {
+                  item.item.users.map(el => {
+                    sendPushNotification(el.notifToken, el.uid, "Custom Notification for your shift on: " + item.item.label, text)
+                  })
+                }
+              },
+            ],
+            'plain-text',
+          );
+          }}>
+        <Text style={styles.reminderButtonText} >Send Reminder</Text>
       </TouchableOpacity>
     </View>
     <View style={styles.container3}>
@@ -419,7 +438,28 @@ function Availability() {
         <Text style={styles.seeMoreButtonText}>See more →</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.moreButton}>
-        <Text style={styles.moreButtonText}>...</Text>
+        <OptionsMenu
+        customButton={myIcon}
+        buttonStyle={{ resizeMode: "contain" }}
+        destructiveIndex={1}
+        options={["Send Custom Notification", "Cancel"]}
+        actions={[() => {
+          Alert.prompt(
+            'Custom Notification',
+            'Enter your custom notification text:',
+            [
+              {text: 'Cancel', style: 'destructive', onPress: () => {}},
+              {
+                text: 'Submit',
+                onPress: (text) => {
+                  console.log(text, el, item)
+                  sendPushNotification(el.notifToken, el.uid, "Custom Notification", text);
+                }
+              },
+            ],
+            'plain-text',
+          );
+          }, () => {}]}/>
       </TouchableOpacity>
     </View>
  );
@@ -439,7 +479,26 @@ function Availability() {
           <Text style={styles.phoneNumber}>{el.item.phone}</Text>
         </View>
         <TouchableOpacity style={styles.moreButton}>
-          <Text style={styles.moreButtonText}>...</Text>
+          <OptionsMenu
+          customButton={myIcon}
+          buttonStyle={{ resizeMode: "contain" }}
+          destructiveIndex={1}
+          options={["Send Custom Notification", "Cancel"]}
+          actions={[() => {Alert.prompt(
+            'Custom Notification',
+            'Enter your custom notification text:',
+            [
+              {text: 'Cancel', style: 'destructive', onPress: () => {}},
+              {
+                text: 'Submit',
+                onPress: (text) => {
+                  console.log(text, el, item)
+                  sendPushNotification(el.notifToken, el.uid, "Custom Notification", text);
+                }
+              },
+            ],
+            'plain-text',
+          );}, () => {}]}/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.seeMoreButton} onPress={() => nav.navigate('VoluteerProfile', { item: el.item })}>
           <Text style={styles.seeMoreButtonText}>See more →</Text>
@@ -453,7 +512,24 @@ function Availability() {
     <View style={styles.container}>
         <View style={styles.container2}>
           <Text style={styles.text}>Event Organizers</Text>
-          <TouchableOpacity style={styles.reminderButton}>
+          <TouchableOpacity style={styles.reminderButton} onPress={() => {
+            Alert.prompt(
+              'Custom Notification',
+              'Enter your custom notification text for the people in the shift:',
+              [
+                {text: 'Cancel', style: 'destructive', onPress: () => {}},
+                {
+                  text: 'Submit',
+                  onPress: (text) => {
+                    item.item.users.map(el => {
+                      sendPushNotification(el.notifToken, el.uid, "Custom Notification for your shift on: " + item.item.label, text)
+                    })
+                  }
+                },
+              ],
+              'plain-text',
+            );
+          }}>
             <Text style={styles.reminderButtonText}>Send Reminder</Text>
           </TouchableOpacity>
         </View>
@@ -686,7 +762,7 @@ item: {
     paddingHorizontal: "2%",
     marginRight: "2%",
     position: 'absolute',
-    top: "-2%",
+    top: "-1%%",
     right: 0,
   },
   moreButtonText: {

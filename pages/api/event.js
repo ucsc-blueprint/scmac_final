@@ -106,7 +106,7 @@ const getUserNotifTokens = async (shiftIds, title, eventId) => {
 
           const userData = userDocSnap.data();
           const notifToken = userData.notifToken;
-          sendPushNotification(notifToken, title, uid, eventId)
+          sendPushNotification(notifToken, uid, "Event Update", "an event you are signed up for has been updated: "+ title)
           console.log(`User ID: ${uid}, Notification Token: ${notifToken}`);
         }
       }
@@ -115,12 +115,13 @@ const getUserNotifTokens = async (shiftIds, title, eventId) => {
     console.error("Error getting user notification tokens: ", error);
   }
 };
-async function sendPushNotification(notiToken, eventName, uid, eventId) {
+
+async function sendPushNotification(notiToken, uid, title, body) {
   const url = "https://exp.host/--/api/v2/push/send";
   const payload = {
     to: notiToken,
-    title: "Event Update",
-    body: "an event you are signed up for has been updated: "+ eventName 
+    title: title,
+    body: body
   };
 
   try {
@@ -136,17 +137,17 @@ async function sendPushNotification(notiToken, eventName, uid, eventId) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    createNotificationUserStore(eventName, eventId, uid)
+    createNotificationUserStore(uid, body)
     const data = await response.json();
     console.log("Push notification sent successfully:", data);
   } catch (error) {
     console.error("Error sending push notification:", error);
   }
 }
-async function createNotificationUserStore(eventName, eventId, uid) {
+async function createNotificationUserStore(uid, description) {
   const notificationsCollection = collection(db, 'notifications');
   const notificationData = {
-    description: "an event you are signed up for has been updated: " + eventName,
+    description: description,
     date: Date.now()
   };
 
@@ -192,4 +193,4 @@ const getShiftData = async (shiftList) => {
 }
 };
 
-export { createEvent, editEvent, getShiftData };
+export { createEvent, editEvent, getShiftData, sendPushNotification };
