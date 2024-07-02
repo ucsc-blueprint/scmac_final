@@ -2,12 +2,12 @@ import React, { useState, setState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, Ionicons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {editEvent, getShiftData} from '../api/event'
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 let nextId = 0;
 let nextShiftsId = 0;
 
@@ -15,6 +15,12 @@ const DATA = [
   { label: 'Ceramics', value: '1' },
   { label: 'Show', value: '2' },
   { label: 'Gallery', value: '3' },
+];
+
+const NoftifDATA = [
+  { label: '1 hour before', value: '1 hour before' },
+  { label: '1 day before', value: '1 day before' },
+  { label: '1 week before', value: '1 week before' },
 ];
 
 export default function EditEventScreen({route, navigation}) {
@@ -38,6 +44,7 @@ export default function EditEventScreen({route, navigation}) {
     const [name, setName] = useState(item.item.title);
     const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
     const [value, setValue] = useState(item.item.category);
+  const [selected, setSelected] = useState(item.item.notfis);
 
   const renderItem = item => {
     return (
@@ -190,7 +197,7 @@ if (eventEnd == "Choose End Date and Time") {
   return;
 }
 if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
-                  await editEvent(item.item.id, eventStart, eventEnd, desc, materials, shifts, name, location, value);
+                  await editEvent(item.item.id, eventStart, eventEnd, desc, materials, shifts, name, location, value, selected);
                   navigation.goBack();
                   navigation.goBack();
                 }}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
@@ -302,6 +309,30 @@ if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
               renderItem={renderItem}
             />
       <Text style={styles.sectionTitle}>Event Description</Text>
+
+      <View style={{flexDirection:'row', marginTop:"3%"}}>
+              <Ionicons name="notifications-outline" size={24} color="black" style={{marginLeft: "2%"}}/>
+              <Text style={{fontSize: 17, fontWeight: '500', marginLeft:'3%'}}>Notifications</Text>
+            </View>
+            <MultiSelect
+              style={styles.multiselect}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={NoftifDATA}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={selected}
+              onChange={item => {
+                setSelected(item);
+              }}
+              renderItem={renderItem}
+            />
+
       <TextInput style={styles.textInput} onChangeText={text => setDesc(text)} multiline placeholder={desc} />
     </ScrollView>
   );
@@ -348,6 +379,26 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontWeight: '400',
 
+  },
+  multiselect: {
+    marginLeft: "3%",
+    marginTop:"3%",
+    marginBottom:"3%",
+    height: "5%",
+    width: "90%",
+    backgroundColor: 'F1F1F2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor:"8E8E93",
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   dropdown: {
     marginLeft: "4%",
@@ -480,7 +531,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     borderRadius: 10,
-
+    marginBottom: "30%",
+    marginTop: "5%"
   },
   buttonText: {
     color: 'white',

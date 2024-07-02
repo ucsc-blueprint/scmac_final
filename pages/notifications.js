@@ -54,6 +54,8 @@ export default function Notifications({navigation}) {
   
             //Filter out null values (notifs not found)
             const filteredNotificationsData = notificationsData.filter(notification => notification !== null);
+            filteredNotificationsData.sort();
+            filteredNotificationsData.reverse();
             setNotifications(filteredNotificationsData);
           } else {
             console.log('No notifications found for this user');

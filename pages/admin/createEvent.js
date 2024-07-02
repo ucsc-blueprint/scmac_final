@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { AntDesign, Entypo, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo, SimpleLineIcons, Ionicons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox';
 import { createEvent } from "../api/event.js"
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 
 let nextId = 0;
 let nextShiftsId = 0;
@@ -13,6 +13,12 @@ const DATA = [
   { label: 'Ceramics', value: '1' },
   { label: 'Show', value: '2' },
   { label: 'Gallery', value: '3' },
+];
+
+const NoftifDATA = [
+  { label: '1 hour before', value: '1 hour before' },
+  { label: '1 day before', value: '1 day before' },
+  { label: '1 week before', value: '1 week before' },
 ];
 
 export default function CreateEventScreen({ navigation }) {
@@ -31,27 +37,12 @@ export default function CreateEventScreen({ navigation }) {
   const [location, setLocation] = useState("");
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
+  const [selected, setSelected] = useState([]);
 
   const renderItem = item => {
     return (
       <View style={styles.item}>
         <Text style={styles.textItem}>{item.label}</Text>
-        {/* {console.log(item.value)}
-        {console.log(value)} */}
-        {item.value === value && (
-          <AntDesign
-            style={styles.icon}
-            color="black"
-            name="Safety"
-            size={20}
-          />
-        )}
-        {/* <AntDesign
-            style={styles.icon}
-            color="black"
-            name="Safety"
-            size={20}
-          /> */}
       </View>
     );
   };
@@ -263,6 +254,29 @@ const isEmpty = (value) => {
                 placeholder="Add Event Description"
             />
 
+            <View style={{flexDirection:'row', marginTop:"3%"}}>
+              <Ionicons name="notifications-outline" size={24} color="black" style={{marginLeft: "2%"}}/>
+              <Text style={{fontSize: 17, fontWeight: '500', marginLeft:'3%'}}>Notifications</Text>
+            </View>
+            <MultiSelect
+              style={styles.multiselect}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={NoftifDATA}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={selected}
+              onChange={item => {
+                setSelected(item);
+              }}
+              renderItem={renderItem}
+            />
+
             <TouchableOpacity
                 onPress={async () => {
                     if (isEmpty(name)) {
@@ -278,7 +292,8 @@ const isEmpty = (value) => {
                       return;
                     }
                     if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
-                    await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location, value);
+                    console.log(selected)
+                    await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location, value, selected);
                     navigation.navigate("AdminEvents");
                 }}
                 style={styles.button}
@@ -305,7 +320,28 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginLeft: "4%",
-    height: "7%",
+    marginRight: "5%",
+    height: "5%",
+    width: "90%",
+    backgroundColor: 'F1F1F2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor:"8E8E93",
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  multiselect: {
+    marginLeft: "3%",
+    marginTop:"3%",
+    marginBottom:"3%",
+    height: "5%",
     width: "90%",
     backgroundColor: 'F1F1F2',
     borderRadius: 12,
@@ -460,7 +496,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     borderRadius: 10,
-
+    marginBottom: "30%",
+    marginTop: "5%"
   },
   buttonText: {
     color: 'white',

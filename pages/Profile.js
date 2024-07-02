@@ -13,6 +13,7 @@ import { Alert } from 'react-native';
 import { storage } from '../firebaseConfig.js';
 import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import { SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { sendPushNotification } from './api/event.js';
 
 export default function Profile({navigation}) {
   const [uid, setUid] = useState("");
@@ -139,7 +140,7 @@ export default function Profile({navigation}) {
       Alert.alert('Are you sure you want to drop out of this event?', '', [
         {
           text: 'Cancel',
-          // onPress: () => console.log('Cancel Pressed'),
+          onPress: () => console.log(item.shifts),
           style: 'cancel',
         },
         {text: 'OK', onPress: async () => {
@@ -155,7 +156,20 @@ export default function Profile({navigation}) {
             productsDocsSnap.forEach(async (document) => {
               // console.log(doc.id)
               if (document.data().user.includes(auth.currentUser.uid)) {
-                console.log(document.id)
+                // console.log(document.id)
+
+              if (document.data().organizers) {
+                document.data().organizers.map(async el => {
+                  const organizerData = await getDoc(doc(db, "users", el))
+                  sendPushNotification(organizerData.data().notifToken, el, "A voluteer dropped from an event you organize", firstName + " " + lastName + " dropped from their " + new Date(document.data().startTime*1000).toLocaleString('en-US', {
+                    weekday: 'short', // 'Fri'
+                    month: 'short',   // 'May'
+                    day: 'numeric',   // '03'
+                    hour: '2-digit',  // '02' or '14'
+                    minute: '2-digit' // '30'
+                }) + " - " + new Date(document.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " shift")
+                })
+              }
 
               await updateDoc(doc(db, "shifts", document.id), {
                 user: arrayRemove(auth.currentUser.uid)

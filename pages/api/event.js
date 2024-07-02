@@ -1,8 +1,8 @@
 import { auth, db } from '../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
 
-
-const createEvent = async (date, endDate, eventDesc, materials, shifts, title, location, category ) => {
+const createEvent = async (date, endDate, eventDesc, materials, shifts, title, location, category, notifs ) => {
     try {
     var materialsObj = []
     var shiftIDS = []
@@ -30,7 +30,8 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
       materials: materialsObj,
       shifts: shiftIDS,
       title: title,
-      category: category
+      category: category,
+      notifs: notifs
     };
     const doc = await addDoc(collection(db, "events"), data);
     return doc;
@@ -41,7 +42,7 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
 };
 
 
-const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location, category) => {
+const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location, category, notfis) => {
   try {
     var materialsObj = [];
     var shiftIDS = [];
@@ -68,7 +69,8 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       materials: materialsObj,
       shifts: shiftIDS,
       title: title,
-      category: category
+      category: category,
+      notfis: notfis
     };
     const eventRef = doc(db, "events", eventId);
     await getUserNotifTokens((await getDoc(eventRef)).data().shifts, title, eventId);
@@ -115,6 +117,17 @@ const getUserNotifTokens = async (shiftIds, title, eventId) => {
     console.error("Error getting user notification tokens: ", error);
   }
 };
+
+async function scheduleNotif(title, body, trigger) {
+  createNotificationUserStore(auth.currentUser.uid, body)
+  Notifications.scheduleNotificationAsync({
+    content: {
+      title: title,
+      body: body,
+    },
+    trigger
+  });
+}
 
 async function sendPushNotification(notiToken, uid, title, body) {
   const url = "https://exp.host/--/api/v2/push/send";
@@ -193,4 +206,4 @@ const getShiftData = async (shiftList) => {
 }
 };
 
-export { createEvent, editEvent, getShiftData, sendPushNotification };
+export { createEvent, editEvent, getShiftData, sendPushNotification, scheduleNotif };

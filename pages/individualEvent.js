@@ -5,6 +5,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { AntDesign } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { auth, db } from '../firebaseConfig';
+import { scheduleNotif } from './api/event';
 
 var item = null;
 export default function EventDetailScreen({route,navigation}) {
@@ -173,6 +174,32 @@ export default function EventDetailScreen({route,navigation}) {
           <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
           <TouchableOpacity style={styles.button} onPress={async ()=> 
             {
+              const shiftData = getDoc(value.shift);
+              const trigger = new Date(shiftData.data().startTime*1000)
+
+              Date.prototype.subtractDays = function (d) {
+                this.setDate(this.getDate() - d);
+                return this;
+            }
+
+              event.notifs.map(el => {
+                if (el === "1 hour before") {
+                  const dateCopy = new Date(trigger);
+                  dateCopy.setHours(dateCopy.getHours() - 1);
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy)
+                }
+                if (el === "1 day before") {
+                  const dateCopy2 = new Date(trigger);
+                  dateCopy2.subtractDays(1);
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2)
+                }
+                if (el === "1 week before") {
+                  const dateCopy3 = new Date(trigger);
+                  dateCopy3.subtractDays(7);
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3)
+                }
+              })
+
               // console.log(value.shift._key.path.segments[1]);
               if (isEnabled) {
                 await updateDoc(value.shift, {

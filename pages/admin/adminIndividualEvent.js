@@ -10,7 +10,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { Octicons, Entypo } from '@expo/vector-icons';
 import OptionsMenu from "react-native-options-menu";
-import { createEvent, sendPushNotification } from '../api/event';
+import { createEvent, scheduleNotif, sendPushNotification } from '../api/event';
 
 const Tab = createMaterialTopTabNavigator();
 var nav = null;
@@ -129,6 +129,7 @@ function Details() {
           location: eventData.location,
           materials: eventData.materials,
           shifts: eventData.shifts,
+          notifs: eventData.notifs
         }
 
       setEvent(fetchedEvents);
@@ -257,7 +258,47 @@ const deleteEvent = async () => {
       <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Additional comments" />
       <TouchableOpacity style={styles.button} onPress={async ()=> 
             {
-              // console.log(value.shift);
+              const shiftData = await getDoc(value.shift);
+              if(shiftData.data().user.includes(auth.currentUser.uid)) {
+                Alert.alert("Already signed up");
+                return;
+              }
+              const trigger = new Date(shiftData.data().startTime*1000);
+              if (new Date > trigger) {
+                Alert.alert("Start date for shift has passed");
+                return;
+              }
+              console.log(event)
+
+              Date.prototype.subtractDays = function (d) {
+                this.setDate(this.getDate() - d);
+                return this;
+            }
+
+              event.notifs.map(el => {
+                if (el === "1 hour before") {
+                  const dateCopy = new Date(trigger);
+                  dateCopy.setHours(dateCopy.getHours() - 1);
+                  if (new Date < dateCopy) {
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy)
+                  }
+                }
+                if (el === "1 day before") {
+                  const dateCopy2 = new Date(trigger);
+                  dateCopy2.subtractDays(1);
+                  if (new Date < dateCopy2) {
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2)
+                  }
+                }
+                if (el === "1 week before") {
+                  const dateCopy3 = new Date(trigger);
+                  dateCopy3.subtractDays(7);
+                  if (new Date < dateCopy3) {
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3)
+                  }
+                }
+              })
+
               if (isEnabled) {
                 await updateDoc(value.shift, {
                   user: arrayUnion(auth.currentUser.uid),

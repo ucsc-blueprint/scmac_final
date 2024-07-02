@@ -48,6 +48,7 @@ export default function Events({navigation}) {
         temp.id = doc.id
         if (new Date() < new Date(temp.endDate*1000)) arr.push(temp);
       })
+      arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
       setEvents(arr);
     }
     fetchData();
