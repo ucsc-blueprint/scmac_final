@@ -69,7 +69,7 @@ export default function App() {
   // persistence: getRfireeactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator initialRouteName='Events'>
       <Stack.Screen name="Login" options={{ headerShown: false, gestureEnabled: false }} >
           {props => <Login {...props} expoPushToken={expoPushToken} />}
         </Stack.Screen>

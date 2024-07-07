@@ -7,6 +7,7 @@ import { db } from '../firebaseConfig';
 import { useFocusEffect } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from 'expo-router';
 
 
 const EventItem = ({ item, nav }) => (
@@ -29,82 +30,195 @@ const EventItem = ({ item, nav }) => (
 
 );
 
-
-export default function Events({navigation}) {
+export default function Events({ navigation }) {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('All');
   const [filtercolor, setFiltercolor] = useState("#F1F1F2");
   const [filtercolor1, setFiltercolor1] = useState("#F1F1F2");
   const [filtercolor2, setFiltercolor2] = useState("#F1F1F2");
   const [filtercolor3, setFiltercolor3] = useState("#F1F1F2");
 
-
-
-  useFocusEffect(useCallback( () => {
-    async function fetchData() {
-      const arr = [];
+  const fetchData = async () => {
+    try {
       const eventsData = await getDocs(collection(db, 'events'));
-      eventsData.forEach(doc => {
-        var temp = doc.data();
-        temp.id = doc.id
-        if (new Date() < new Date(temp.endDate*1000)) arr.push(temp);
-      })
-      arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
-      setEvents(arr);
-    }
-    fetchData();
-  }, []))
+      const arr = eventsData.docs.map(doc => {
+        const data = doc.data();
+        const date = parseInt(data.date); // parse Int for correct sorting
+        const endDate =  parseInt(data.endDate);
 
-  let i = 0;
+        // log if date or endDate is Nan
+        if (isNaN(date) || isNaN(endDate)) {
+          console.error(`Invalid date for event ${doc.id}: date=${data.date}, endDate=${data.endDate}`);
+        }
+
+      return {
+        ...data,
+        id: doc.id,
+        date: date, // parse Int for correct sorting
+        endDate: endDate
+      };
+      });
+      arr.sort((a, b) => new Date(a.date * 1000) - new Date(b.date * 1000));
+      //
+      console.log('All events:', arr);
+      setEvents(arr.filter(event => new Date() < new Date(event.endDate * 1000))); // only future events
+      setFilteredEvents(arr.filter(event => new Date() < new Date(event.endDate * 1000))); // initially display all events
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   if (activeFilter === 'All') {
+  //     setFilteredEvents(events);
+  //   } else {
+  //     setFilteredEvents(events.filter(event => event.label === activeFilter || (event.category && event.category.label === activeFilter)));
+  //   }
+  // }, [activeFilter, events]);
+
+  //debug
+  useEffect(() => {
+    const filtered = activeFilter === 'All'
+      ? events
+      : events.filter(event => event.label === activeFilter || (event.category && event.category.label === activeFilter));
+    console.log(`Filtered events for category ${activeFilter}:`, filtered);
+    setFilteredEvents(filtered);
+  }, [activeFilter, events]);
+
+  const handleFilterPress = (category) => {
+    setActiveFilter(category);
+    setFiltercolor(category === "All" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor1(category === "Ceramics" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor2(category === "Shows" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor3(category === "Art Gallery" ? "#A16AA4" : "#F1F1F2");
+  };
+
+  const renderItem = ({ item }) => (
+    <EventItem key={item.id} item={item} nav={navigation} />
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Events</Text>
-        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents");}} style={{marginLeft:"25%"}} />
+        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents"); }} style={{ marginLeft: "25%" }} />
       </View>
       <View style={styles.filter}>
-      <Ionicons name="filter-outline" size={30} color="black"/>
-      <TouchableOpacity style={{backgroundColor:filtercolor,
-    borderRadius: 10,
-    fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor=="#A16AA4") {setFiltercolor("#F1F1F2")} else { setFiltercolor("#A16AA4")}}}>
-        <Text>All</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={{backgroundColor:filtercolor1,
-    borderRadius: 10,
-    fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor1=="#A16AA4") {setFiltercolor1("#F1F1F2")} else { setFiltercolor1("#A16AA4")}}}>
-        <Text>Ceramics</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={{backgroundColor:filtercolor2,
-    borderRadius: 10,
-    fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor2=="#A16AA4") {setFiltercolor2("#F1F1F2")} else { setFiltercolor2("#A16AA4")}}}>
-        <Text>Shows</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={{backgroundColor:filtercolor3,
-    borderRadius: 10,
-    fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor3=="#A16AA4") {setFiltercolor3("#F1F1F2")} else { setFiltercolor3("#A16AA4")}}}>
-        <Text>Art Gallery</Text>
-      </TouchableOpacity>
+        <Ionicons name="filter-outline" size={30} color="black" />
+        <TouchableOpacity style={{ backgroundColor: filtercolor, borderRadius: 10, fontSize: 15, padding: 10 }}
+          onPress={() => handleFilterPress("All")}>
+          <Text>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: filtercolor1, borderRadius: 10, fontSize: 15, padding: 10 }}
+          onPress={() => handleFilterPress("Ceramics")}>
+          <Text>Ceramics</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: filtercolor2, borderRadius: 10, fontSize: 15, padding: 10 }}
+          onPress={() => handleFilterPress("Shows")}>
+          <Text>Shows</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ backgroundColor: filtercolor3, borderRadius: 10, fontSize: 15, padding: 10 }}
+          onPress={() => handleFilterPress("Art Gallery")}>
+          <Text>Art Gallery</Text>
+        </TouchableOpacity>
       </View>
       <FlatList
-        data={events}
-        renderItem={({ item }) => (
-          <EventItem key={i++} item={item} nav={navigation} />
-        )}
-        // keyExtractor={item => item.id}
+        data={filteredEvents}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 10, marginTop: "2%", marginLeft: "2%" }}
       />
-      <View style={{position: "absolute", bottom:0, width:"100%"}}>
-        <NavBar navigation={navigation}/>
+      <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
+        <NavBar navigation={navigation} />
       </View>
     </View>
   );
 }
+
+// export default function Events({navigation}) {
+//   const [events, setEvents] = useState([]);
+//   const [filtercolor, setFiltercolor] = useState("#F1F1F2");
+//   const [filtercolor1, setFiltercolor1] = useState("#F1F1F2");
+//   const [filtercolor2, setFiltercolor2] = useState("#F1F1F2");
+//   const [filtercolor3, setFiltercolor3] = useState("#F1F1F2");
+
+  // useFocusEffect(useCallback( () => {
+  //   async function fetchData() {
+  //     const arr = [];
+  //     const eventsData = await getDocs(collection(db, 'events'));
+  //     eventsData.forEach(doc => {
+  //       var temp = doc.data();
+  //       temp.id = doc.id
+  //       if (new Date() < new Date(temp.endDate*1000)) arr.push(temp);
+  //     })
+  //     arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
+  //     // setEvents(arr);
+
+  //     if (selectedCategory !== 'All'){
+  //       setEvents(arr.filter(event => event.category == selectedCategory));
+  //     }else {
+  //       setEvents(arr);
+  //     }
+  //   }
+  //   fetchData();
+  // }, [selectedCategory]));
+
+
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.header}>
+//         <Text style={styles.headerText}>Events</Text>
+//         <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents");}} style={{marginLeft:"25%"}} />
+//       </View>
+//       <View style={styles.filter}>
+//       <Ionicons name="filter-outline" size={30} color="black"/>
+//       <TouchableOpacity style={{backgroundColor:filtercolor,
+//     borderRadius: 10,
+//     fontSize:15,
+//     padding:10,}} onPress={()=>{if (filtercolor=="#A16AA4") {setFiltercolor("#F1F1F2")} else { setFiltercolor("#A16AA4")}}}>
+//         <Text>All</Text>
+//       </TouchableOpacity>
+
+//       <TouchableOpacity style={{backgroundColor:filtercolor1,
+//     borderRadius: 10,
+//     fontSize:15,
+//     padding:10,}} onPress={()=>{if (filtercolor1=="#A16AA4") {setFiltercolor1("#F1F1F2")} else { setFiltercolor1("#A16AA4")}}}>
+//         <Text>Ceramics</Text>
+//       </TouchableOpacity>
+
+//       <TouchableOpacity style={{backgroundColor:filtercolor2,
+//     borderRadius: 10,
+//     fontSize:15,
+//     padding:10,}} onPress={()=>{if (filtercolor2=="#A16AA4") {setFiltercolor2("#F1F1F2")} else { setFiltercolor2("#A16AA4")}}}>
+//         <Text>Shows</Text>
+//       </TouchableOpacity>
+
+//       <TouchableOpacity style={{backgroundColor:filtercolor3,
+//     borderRadius: 10,
+//     fontSize:15,
+//     padding:10,}} onPress={()=>{if (filtercolor3=="#A16AA4") {setFiltercolor3("#F1F1F2")} else { setFiltercolor3("#A16AA4")}}}>
+//         <Text>Art Gallery</Text>
+//       </TouchableOpacity>
+//       </View>
+//       <FlatList
+//         data={events}
+//         renderItem={({ item }) => (
+//           <EventItem key={i++} item={item} nav={navigation} />
+//         )}
+//         // keyExtractor={item => item.id}
+//       />
+//       <View style={{position: "absolute", bottom:0, width:"100%"}}>
+//         <NavBar navigation={navigation}/>
+//       </View>
+//     </View>
+//   );
+// }
 
 const styles = StyleSheet.create({
   container: {
