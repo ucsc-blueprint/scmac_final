@@ -32,12 +32,12 @@ const EventItem = ({ item, nav }) => (
 
 export default function Events({navigation}) {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('All');
   const [filtercolor, setFiltercolor] = useState("#F1F1F2");
   const [filtercolor1, setFiltercolor1] = useState("#F1F1F2");
   const [filtercolor2, setFiltercolor2] = useState("#F1F1F2");
   const [filtercolor3, setFiltercolor3] = useState("#F1F1F2");
-
-
 
   useFocusEffect(useCallback( () => {
     async function fetchData() {
@@ -50,11 +50,28 @@ export default function Events({navigation}) {
       })
       arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
       setEvents(arr);
+      setFilteredEvents(arr);
     }
     fetchData();
   }, []))
 
   let i = 0;
+
+  useEffect(() => {
+    const filtered = activeFilter === 'All'
+      ? events
+      : events.filter(event => event.label === activeFilter || (event.category && event.category.label === activeFilter));
+    console.log(`Filtered events for category ${activeFilter}:`, filtered);
+    setFilteredEvents(filtered);
+  }, [activeFilter, events]);
+
+  const handleFilterPress = (category) => {
+    setActiveFilter(category);
+    setFiltercolor(category === "All" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor1(category === "Ceramics" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor2(category === "Shows" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor3(category === "Special Events" ? "#A16AA4" : "#F1F1F2");
+  };
 
   return (
     <View style={styles.container}>
@@ -67,33 +84,33 @@ export default function Events({navigation}) {
       <TouchableOpacity style={{backgroundColor:filtercolor,
     borderRadius: 10,
     fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor=="#A16AA4") {setFiltercolor("#F1F1F2")} else { setFiltercolor("#A16AA4")}}}>
+    padding:10,}} onPress={() => handleFilterPress("All")}>
         <Text>All</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={{backgroundColor:filtercolor1,
     borderRadius: 10,
     fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor1=="#A16AA4") {setFiltercolor1("#F1F1F2")} else { setFiltercolor1("#A16AA4")}}}>
+    padding:10,}} onPress={() => handleFilterPress("Ceramics")}>
         <Text>Ceramics</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={{backgroundColor:filtercolor2,
     borderRadius: 10,
     fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor2=="#A16AA4") {setFiltercolor2("#F1F1F2")} else { setFiltercolor2("#A16AA4")}}}>
+    padding:10,}} onPress={() => handleFilterPress("Shows")}>
         <Text>Shows</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={{backgroundColor:filtercolor3,
     borderRadius: 10,
     fontSize:15,
-    padding:10,}} onPress={()=>{if (filtercolor3=="#A16AA4") {setFiltercolor3("#F1F1F2")} else { setFiltercolor3("#A16AA4")}}}>
-        <Text>Art Gallery</Text>
+    padding:10,}} onPress={() => handleFilterPress("Special Events")}>
+        <Text>Special Events</Text>
       </TouchableOpacity>
       </View>
       <FlatList
-        data={events}
+        data={filteredEvents}
         renderItem={({ item }) => (
           <EventItem key={i++} item={item} nav={navigation} />
         )}

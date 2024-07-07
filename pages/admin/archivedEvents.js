@@ -22,11 +22,10 @@ export default function ArchivedEvents({navigation}) {
       eventsData.forEach(doc => {
         var temp = doc.data();
         temp.id = doc.id;
-        if (!(new Date() < new Date(temp.date*1000))) arr.push(temp);
-        // console.log(!(new Date() < new Date(temp.date)))
+        if (!(new Date() < new Date(temp.endDate * 1000))) {arr.push(temp)}
       })
+      arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
       setEvents(arr);
-    //   console.log(events);
     }
     fetchData();
   }, []))

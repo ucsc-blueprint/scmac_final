@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons, Feather, AntDesign, Ionicons } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
@@ -26,7 +26,12 @@ const EventItem = ({ item, nav }) => (
 
 export default function AdminEvents({ navigation }) {
   const [events, setEvents] = useState([]);
-  const [filterColors, setFilterColors] = useState(["#F1F1F2", "#F1F1F2", "#F1F1F2", "#F1F1F2"]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [filtercolor, setFiltercolor] = useState("#F1F1F2");
+  const [filtercolor1, setFiltercolor1] = useState("#F1F1F2");
+  const [filtercolor2, setFiltercolor2] = useState("#F1F1F2");
+  const [filtercolor3, setFiltercolor3] = useState("#F1F1F2");
 
   useFocusEffect(useCallback(() => {
     async function fetchData() {
@@ -39,14 +44,25 @@ export default function AdminEvents({ navigation }) {
       });
       arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
       setEvents(arr);
+      setFilteredEvents(arr);
     }
     fetchData();
   }, []));
 
-  const toggleFilterColor = (index) => {
-    setFilterColors(prevColors =>
-      prevColors.map((color, i) => (i === index ? (color === "#A16AA4" ? "#F1F1F2" : "#A16AA4") : color))
-    );
+  useEffect(() => {
+    const filtered = activeFilter === 'All'
+      ? events
+      : events.filter(event => event.label === activeFilter || (event.category && event.category.label === activeFilter));
+    console.log(`Filtered events for category ${activeFilter}:`, filtered);
+    setFilteredEvents(filtered);
+  }, [activeFilter, events]);
+
+  const handleFilterPress = (category) => {
+    setActiveFilter(category);
+    setFiltercolor(category === "All" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor1(category === "Ceramics" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor2(category === "Shows" ? "#A16AA4" : "#F1F1F2");
+    setFiltercolor3(category === "Special Events" ? "#A16AA4" : "#F1F1F2");
   };
 
   return (
@@ -57,17 +73,37 @@ export default function AdminEvents({ navigation }) {
         <AntDesign onPress={() => { navigation.navigate("CreateEvent"); }} name="plus" size={24} color="white" style={styles.iconRight} />
       </View>
       <View style={styles.filter}>
-        {['All', 'Ceramics', 'Gallery', 'Special Events'].map((filter, index) => (
-          <TouchableOpacity
-            key={index}
-            style={{ ...styles.filterButton, backgroundColor: filterColors[index] }}
-            onPress={() => toggleFilterColor(index)}>
-            <Text>{filter}</Text>
-          </TouchableOpacity>
-        ))}
+      <Ionicons name="filter-outline" size={30} color="black"/>
+      <TouchableOpacity style={{backgroundColor:filtercolor,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={() => handleFilterPress("All")}>
+        <Text>All</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor1,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={() => handleFilterPress("Ceramics")}>
+        <Text>Ceramics</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor2,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={() => handleFilterPress("Shows")}>
+        <Text>Shows</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor3,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={() => handleFilterPress("Special Events")}>
+        <Text>Special Events</Text>
+      </TouchableOpacity>
       </View>
       <FlatList
-        data={events}
+        data={filteredEvents}
         renderItem={({ item }) => <EventItem key={item.id} item={item} nav={navigation} />}
         keyExtractor={item => item.id}
       />
