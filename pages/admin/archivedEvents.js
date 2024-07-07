@@ -25,6 +25,7 @@ export default function ArchivedEvents({navigation}) {
         if (!(new Date() < new Date(temp.endDate * 1000))) {arr.push(temp)}
       })
       arr.sort((a, b) => new Date(a.date*1000) - new Date(b.date*1000));
+      arr.reverse();
       setEvents(arr);
     }
     fetchData();

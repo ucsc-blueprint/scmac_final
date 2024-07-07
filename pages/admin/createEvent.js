@@ -12,7 +12,7 @@ let nextShiftsId = 0;
 const DATA = [
   { label: 'Ceramics', value: '1' },
   { label: 'Show', value: '2' },
-  { label: 'Gallery', value: '3' },
+  { label: 'Special Events', value: '3' },
 ];
 
 const NoftifDATA = [
