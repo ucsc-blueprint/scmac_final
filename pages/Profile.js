@@ -6,7 +6,7 @@ import { auth, db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { doc, getDoc, getDocs, snapshotEqual, updateDoc, query, collection, where, documentId, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, getDocs, snapshotEqual, updateDoc, query, collection, where, documentId, arrayRemove, deleteDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker'; 
 // import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
@@ -14,6 +14,7 @@ import { storage } from '../firebaseConfig.js';
 import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import { SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { sendPushNotification } from './api/event.js';
+import * as Notifications from 'expo-notifications';
 
 export default function Profile({navigation}) {
   const [uid, setUid] = useState("");
@@ -35,6 +36,7 @@ export default function Profile({navigation}) {
   const [uploading, setUploading] = useState(false);
   const [downloadURL, setImageURL] = useState("");
   const [eventsData, setEventsData] = useState([]);
+  const [notifs, setNotifs] = useState([]);
  
   let i = 0;
 
@@ -94,19 +96,16 @@ export default function Profile({navigation}) {
   useEffect( () => {
     async function fetchData() {
       data = await getCurrentUserData();
-      // console.log(data);
       const arr2 = [];
       if (data.events) {
       data.events.forEach(async el => {
-        // console.log(el);
         const eventDoc = doc(db, "events", el);
         const temp = await getDoc(eventDoc);
-        // const temp = await getDoc(doc(db, "events", data.events[0]));
         const eventData = temp.data();
-        eventData["id"] = el;
-        // arr2.push(eventData);
-        if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
-        // console.log(eventData);
+        if (el && eventData) {
+          eventData["id"] = el;
+          if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+        }
         setEventsData(arr2);
       });
     }
@@ -119,6 +118,7 @@ export default function Profile({navigation}) {
       setGender(data.gender);
       setBirthday(data.birthday*1000);
       setInterests(data.interests);
+      if (data.notifications) setNotifs(data.notifications);
       data.interests.forEach((el) => {
         if (el === "Pottery") setPottery(!pottery);
         if (el === "Gallery") setGallery(!gallery);
@@ -179,6 +179,16 @@ export default function Profile({navigation}) {
                 events: arrayRemove(item.id)
               })
 
+              if (notifs) {
+                notifs.forEach(async (d) => {
+                  var noti = await getDoc(doc(db, "notifications", d));
+                  if (noti.data().eventId && noti.data().eventId == item.id) {
+                    await Notifications.cancelScheduledNotificationAsync(noti.data().identifier);
+                    await deleteDoc(doc(db, "notifications", d))
+                  }
+                })
+              }
+
               data = await getCurrentUserData();
               const arr2 = [];
               if (data.events) {
@@ -186,8 +196,10 @@ export default function Profile({navigation}) {
                 const eventDoc = doc(db, "events", el);
                 const temp = await getDoc(eventDoc);
                 const eventData = temp.data();
-                eventData["id"] = el;
-                if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+                if (el && eventData) {
+                  eventData["id"] = el;
+                  if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+                }
                 setEventsData(arr2);
               });
               }

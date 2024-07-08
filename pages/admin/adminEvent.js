@@ -53,7 +53,7 @@ export default function AdminEvents({ navigation }) {
     const filtered = activeFilter === 'All'
       ? events
       : events.filter(event => event.label === activeFilter || (event.category && event.category.label === activeFilter));
-    console.log(`Filtered events for category ${activeFilter}:`, filtered);
+    // console.log(`Filtered events for category ${activeFilter}:`, filtered);
     setFilteredEvents(filtered);
   }, [activeFilter, events]);
 

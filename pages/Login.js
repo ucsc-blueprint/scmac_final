@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
@@ -6,8 +6,10 @@ import { Image } from 'expo-image';
 import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
-import {login} from "./api/users.js"
+import {checkPersistence, login} from "./api/users.js"
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../firebaseConfig.js';
+import { onAuthStateChanged } from 'firebase/auth';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
@@ -15,6 +17,21 @@ export default function Login({navigation, expoPushToken}) {
   const [isEyeOpen, setIsEyeOpen] = useState(true);
   const [email, setEmail] = useState("");
   const [pword, setPword] = useState("");
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user.uid) {
+        var userData = await checkPersistence(expoPushToken, user.uid);
+          if(userData){
+            navigation.navigate("AdminEvents");
+          }
+          else{
+            navigation.navigate("Events");
+          }
+      }
+    });
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>

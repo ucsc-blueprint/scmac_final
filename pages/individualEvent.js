@@ -186,17 +186,17 @@ export default function EventDetailScreen({route,navigation}) {
                 if (el === "1 hour before") {
                   const dateCopy = new Date(trigger);
                   dateCopy.setHours(dateCopy.getHours() - 1);
-                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy)
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy, event.id)
                 }
                 if (el === "1 day before") {
                   const dateCopy2 = new Date(trigger);
                   dateCopy2.subtractDays(1);
-                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2)
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2, event.id)
                 }
                 if (el === "1 week before") {
                   const dateCopy3 = new Date(trigger);
                   dateCopy3.subtractDays(7);
-                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3)
+                  scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3, event.id)
                 }
               })
 

@@ -118,15 +118,15 @@ const getUserNotifTokens = async (shiftIds, title, eventId) => {
   }
 };
 
-async function scheduleNotif(title, body, trigger) {
-  createNotificationUserStore(auth.currentUser.uid, body)
-  Notifications.scheduleNotificationAsync({
+async function scheduleNotif(title, body, trigger, eventId) {
+  const identifier = await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: body,
     },
     trigger
   });
+  createNotificationUserStore(auth.currentUser.uid, body, eventId, identifier)
 }
 
 async function sendPushNotification(notiToken, uid, title, body) {
@@ -157,11 +157,14 @@ async function sendPushNotification(notiToken, uid, title, body) {
     console.error("Error sending push notification:", error);
   }
 }
-async function createNotificationUserStore(uid, description) {
+
+async function createNotificationUserStore(uid, description, eventId = "", identifier = "") {
   const notificationsCollection = collection(db, 'notifications');
   const notificationData = {
     description: description,
-    date: Date.now()
+    date: Date.now(),
+    eventId: eventId,
+    identifier: identifier
   };
 
   try {

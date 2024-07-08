@@ -3,11 +3,18 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthState
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 import { Alert } from 'react-native';
 
+const checkPersistence = async (notifToken, uid) => {
+  //Update the user's document with the notification token
+  await setDoc(doc(db, "users", uid), { notifToken: notifToken }, { merge: true });
+  
+  // Return the user object on successful login and Firestore update
+  const userData = await getDoc(doc(db, "users", uid));
+  return userData.data().admin;
+}
 
 // Login function
 const login = async (email, password, notifToken) => {
   try {
-    // Sign in with email and password
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
@@ -16,11 +23,10 @@ const login = async (email, password, notifToken) => {
     
     // Return the user object on successful login and Firestore update
     const userData = await getDoc(doc(db, "users", user.uid));
-    console.log(userData.data());
     return userData.data();
   } catch (error) {
     // Handle or return the error appropriately
-    // console.error("Login error:", error);
+    console.error("Login error:", error);
     if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
     if (error.code == "auth/invalid-credential") Alert.alert("Incorrect Email or Password");
     if (error.code == "auth/user-not-found") Alert.alert("User not found");
@@ -82,4 +88,4 @@ const getCurrentUserData = async () => {
 }
 
 
-export { login, signup , getCurrentUser, getCurrentUserData};
+export { login, signup , getCurrentUser, getCurrentUserData, checkPersistence };

@@ -11,6 +11,7 @@ import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { Octicons, Entypo } from '@expo/vector-icons';
 import OptionsMenu from "react-native-options-menu";
 import { createEvent, scheduleNotif, sendPushNotification } from '../api/event';
+import * as Notifications from 'expo-notifications';
 
 const Tab = createMaterialTopTabNavigator();
 var nav = null;
@@ -169,7 +170,21 @@ const deleteEvent = async () => {
       style: 'cancel',
     },
     {text: 'OK', onPress: async () => {
+      // console.log(item.item.id);
       await deleteDoc(doc(db, "events", item.item.id));
+
+      const q = query(
+        collection(db, "notifications"),
+        where("eventId", "==", 
+          item.item.id
+        ),
+      );
+      const productsDocsSnap = await getDocs(q);
+
+      productsDocsSnap.forEach(async (document) => {
+        await Notifications.cancelScheduledNotificationAsync(document.data().identifier);
+        await deleteDoc(doc(db, "notifications", document.id))
+      });
       // console.log(item.item.id);
       nav.navigate("AdminEvents");}},
   ]);
@@ -280,21 +295,21 @@ const deleteEvent = async () => {
                   const dateCopy = new Date(trigger);
                   dateCopy.setHours(dateCopy.getHours() - 1);
                   if (new Date < dateCopy) {
-                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy)
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy, event.id)
                   }
                 }
                 if (el === "1 day before") {
                   const dateCopy2 = new Date(trigger);
                   dateCopy2.subtractDays(1);
                   if (new Date < dateCopy2) {
-                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2)
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2, event.id)
                   }
                 }
                 if (el === "1 week before") {
                   const dateCopy3 = new Date(trigger);
                   dateCopy3.subtractDays(7);
                   if (new Date < dateCopy3) {
-                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3)
+                    scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3, event.id)
                   }
                 }
               })
