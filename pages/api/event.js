@@ -44,23 +44,43 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
 
 const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location, category, notfis) => {
   try {
-    var materialsObj = [];
-    var shiftIDS = [];
+    const eventRef = doc(db, "events", eventId);
+    const eventDoc = await getDoc(eventRef);
+
+    if (!eventDoc.exists()) {
+      throw new Error("Event not found");
+    }
+
+    const eventData = eventDoc.data();
+    const existingShiftIds = eventData.shifts || [];
+    const existingMaterials = eventData.materials || [];
+
+    const materialsObj = existingMaterials.map(mat => ({ item: mat.item, user: mat.user }));
     materials.forEach(mat => {
-      materialsObj.push({ item: mat["name"], user: "" });
+      if (!materialsObj.some(m => m.item === mat.name)) {
+        materialsObj.push({ item: mat.name, user: "" });
+      }
     });
+
+    const shiftIDS = [...existingShiftIds];
     for (let i = 0; i < shifts.length; i++) {
       const shift = shifts[i];
-      if (shift["endTime"] && shift["startTime"]) {
+      if (shift.id) {
+        const shiftRef = doc(db, "shifts", shift.id);
+        await updateDoc(shiftRef, {
+          endTime: parseInt(shift.endTime),
+          startTime: parseInt(shift.startTime)
+        });
+      } else {
         const docRef = await addDoc(collection(db, "shifts"), {
-          endTime: parseInt(shift["endTime"]),
-          startTime: parseInt(shift["startTime"]),
+          endTime: parseInt(shift.endTime),
+          startTime: parseInt(shift.startTime),
           user: []
         });
-        console.log(docRef.id);
         shiftIDS.push(docRef.id);
       }
     }
+
     const data = {
       date: eventStart,
       endDate: eventEnd,
@@ -72,8 +92,9 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       category: category,
       notfis: notfis
     };
-    const eventRef = doc(db, "events", eventId);
-    await getUserNotifTokens((await getDoc(eventRef)).data().shifts, title, eventId);
+
+    await getUserNotifTokens(existingShiftIds, title, eventId);
+
     await updateDoc(eventRef, data);
 
   } catch (error) {
