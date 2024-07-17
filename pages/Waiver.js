@@ -2,8 +2,9 @@ import Checkbox from 'expo-checkbox';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
 import { addWaiver } from "./api/waivers.js"
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
+import { signup } from './api/users.js';
 
 export default function Waiver({route, navigation}) {
   const [lastName, setLastName] = useState('');
@@ -33,6 +34,7 @@ export default function Waiver({route, navigation}) {
 
   const [isChecked, setIsChecked] = useState(false);
   const [uid, setUid] = useState('');
+  const [data, setData] = useState();
 
   // await and async?
   const handleSubmit = () => {
@@ -58,16 +60,29 @@ export default function Waiver({route, navigation}) {
   useEffect( () => {
     async function fetchData() {
       const { item } = route.params;
-      setUid(item.uid);
-      console.log(item.uid);
+      console.log("item: " + item.uid);
 
-      const userRef = await getDoc(doc(db, "users", item.uid));
+      // await signup(item.email, item.pword, item.fname, item.lname, item.phone, item.interests, item.birthday, item.notifToken);
+      // const user = await signup(item);
+      // console.log(user)
 
-      setLastName(userRef.data().lname);
-      setFirstInitial(userRef.data().fname[0]);
-      setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
-      setVolunteerEmail(userRef.data().email);
-      setVolunteerPhoneCell(userRef.data().phone);
+      if (item) await setDoc(doc(db, "users", item.uid), item);
+      console.log(auth.currentUser.uid)
+
+      if (auth.currentUser.uid) setUid(auth.currentUser.uid);
+      else setUid(item.uid)
+      // console.log(auth.currentUser.uid)
+
+      var userRef;
+      if (auth.currentUser.uid) userRef = await getDoc(doc(db, "users", auth.currentUser.uid));
+      else userRef = await getDoc(doc(db, "users", item.uid));
+      console.log("data: ")
+      console.log(userRef.data())
+      // setLastName(userRef.data().lname);
+      // setFirstInitial(userRef.data().fname[0]);
+      // setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
+      // setVolunteerEmail(userRef.data().email);
+      // setVolunteerPhoneCell(userRef.data().phone);
 
       // cpontinue doing all the fields from signup!!! slay
       // const event = item;

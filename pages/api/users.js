@@ -5,7 +5,7 @@ import { Alert } from 'react-native';
 
 const checkPersistence = async (notifToken, uid) => {
   //Update the user's document with the notification token
-  await setDoc(doc(db, "users", uid), { notifToken: notifToken }, { merge: true });
+  await updateDoc(doc(db, "users", uid), { notifToken: notifToken }, { merge: true });
   
   // Return the user object on successful login and Firestore update
   const userData = await getDoc(doc(db, "users", uid));
@@ -34,27 +34,27 @@ const login = async (email, password, notifToken) => {
   }
 };
 
-const signup = async (email, password, fname, lname, phoneNumber, interests, birthday, expoPushToken) => {
+const signup = async (item) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const data = {
-      uid: user.uid,
-      fname: fname,
-      lname: lname,
-      email: email,
-      phone: phoneNumber,
-      admin: false,
-      birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
-      notifToken: expoPushToken,
-      downloadURL: "",
-      notifications: [],
-      gender: "",
-      interests: interests
-    };
-    await setDoc(doc(db, "users", user.uid), data);
+    // const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // const user = userCredential.user;
+    // const data = {
+    //   uid: user.uid,
+    //   fname: fname,
+    //   lname: lname,
+    //   email: email,
+    //   phone: phoneNumber,
+    //   admin: false,
+    //   birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
+    //   notifToken: expoPushToken,
+    //   downloadURL: "",
+    //   notifications: [],
+    //   gender: "",
+    //   interests: interests
+    // };
+    // await setDoc(doc(db, "users", user.uid), data);
 
-    return user;
+    // return user;
   } catch (error) {
     // console.error("Signup error:", error);
     if (error.code == "auth/email-already-exists") Alert.alert("Email already exists");

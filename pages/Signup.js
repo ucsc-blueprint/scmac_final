@@ -7,6 +7,8 @@ import { Feather } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig.js';
 
 const items = [{
   id: '0',
@@ -166,8 +168,34 @@ export default function Signup({navigation, expoPushToken}) {
                   if (gallery) arr.push("Gallery");
                   if (events) arr.push("Events");
                   if (facilities) arr.push("Facilities");
-                  const item = await signup(email, pword, fname, lname, phone, arr, birthday, expoPushToken);
-                  if (item) navigation.navigate("Waiver", {item: item})
+                  // await signup(email, pword, fname, lname, phone, arr, birthday, expoPushToken);
+                  try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pword);
+                    const user = userCredential.user;
+                    const data = {
+                      uid: user.uid,
+                      fname: fname,
+                      lname: lname,
+                      email: email,
+                      phone: phone,
+                      // admin: false,
+                      birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
+                      notifToken: expoPushToken,
+                      downloadURL: "",
+                      notifications: [],
+                      gender: "",
+                      interests: arr
+                    };
+                    navigation.navigate("Waiver", {item: data});
+                  } catch (error) {
+                    // console.error("Signup error:", error.code);
+                    if (error.code == "auth/email-already-exists") Alert.alert("Email already exists");
+                    if (error.code == "auth/email-already-in-use") Alert.alert("Email already in use");
+                    if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
+                    if (error.code == "auth/invalid-password") Alert.alert("Invalid Password (Must be at least 6 characters)");
+                    if (error.code == "auth/weak-password") Alert.alert("Password must be at least 6 characters");
+                    // throw error;
+                  }
                 } else {
                   Alert.alert("Cannot leave field empty");
                 }

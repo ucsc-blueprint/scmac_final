@@ -91,6 +91,7 @@ export default function EventDetailScreen({route,navigation}) {
           location: eventData.location,
           materials: eventData.materials,
           shifts: eventData.shifts,
+          notifs: eventData.notifs
         }
 
       setEvent(fetchedEvents);
@@ -174,31 +175,48 @@ export default function EventDetailScreen({route,navigation}) {
           <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
           <TouchableOpacity style={styles.button} onPress={async ()=> 
             {
-              const shiftData = getDoc(value.shift);
-              const trigger = new Date(shiftData.data().startTime*1000)
+              const shiftData = await getDoc(value.shift);
+              if(shiftData.data().user.includes(auth.currentUser.uid)) {
+                Alert.alert("Already signed up");
+                return;
+              }
+              const trigger = new Date(shiftData.data().startTime*1000);
+              if (new Date > trigger) {
+                Alert.alert("Start date for shift has passed");
+                return;
+              }
+              console.log("event: " + event.title)
 
               Date.prototype.subtractDays = function (d) {
                 this.setDate(this.getDate() - d);
                 return this;
             }
 
-              event.notifs.map(el => {
-                if (el === "1 hour before") {
-                  const dateCopy = new Date(trigger);
-                  dateCopy.setHours(dateCopy.getHours() - 1);
+            console.log(event)
+
+            event.notifs.map(el => {
+              if (el === "1 hour before") {
+                const dateCopy = new Date(trigger);
+                dateCopy.setHours(dateCopy.getHours() - 1);
+                if (new Date < dateCopy) {
                   scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy, event.id)
                 }
-                if (el === "1 day before") {
-                  const dateCopy2 = new Date(trigger);
-                  dateCopy2.subtractDays(1);
+              }
+              if (el === "1 day before") {
+                const dateCopy2 = new Date(trigger);
+                dateCopy2.subtractDays(1);
+                if (new Date < dateCopy2) {
                   scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy2, event.id)
                 }
-                if (el === "1 week before") {
-                  const dateCopy3 = new Date(trigger);
-                  dateCopy3.subtractDays(7);
+              }
+              if (el === "1 week before") {
+                const dateCopy3 = new Date(trigger);
+                dateCopy3.subtractDays(7);
+                if (new Date < dateCopy3) {
                   scheduleNotif("Reminder for event: " + event.title, "Be there for your shift: " + value.label, dateCopy3, event.id)
                 }
-              })
+              }
+            })
 
               // console.log(value.shift._key.path.segments[1]);
               if (isEnabled) {

@@ -8,8 +8,9 @@ import { Feather } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import {checkPersistence, login} from "./api/users.js"
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { auth } from '../firebaseConfig.js';
+import { auth, db } from '../firebaseConfig.js';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
@@ -21,8 +22,12 @@ export default function Login({navigation, expoPushToken}) {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user.uid) {
-        var userData = await checkPersistence(expoPushToken, user.uid);
-          if(userData){
+        var document = await getDoc(doc(db, "waivers", user.uid));
+        if (document.exists()) var userDataAdmin = await checkPersistence(expoPushToken, user.uid);
+          if (!document.exists()) {
+            navigation.navigate("Waiver", user.uid);
+          }
+          else if(userDataAdmin){
             navigation.navigate("AdminEvents");
           }
           else{
