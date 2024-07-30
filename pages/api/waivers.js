@@ -35,6 +35,7 @@ const addWaiver = async (uid, emergencyContactName, emergencyContactPhoneCell, e
       volunteerPhoneHome: volunteerPhoneHome,
       volunteerSignature: volunteerSignature
     };
+    console.log("waiver uid: " + uid)
     await setDoc(doc(db, "waivers", uid), data);
     return uid;
     

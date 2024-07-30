@@ -252,7 +252,7 @@ export default function Profile({navigation}) {
                   lname: lastName,
                   email: email,
                   phone: phoneNumber,
-                  pfp: downloadURL ? "" : downloadURL,
+                  pfp: downloadURL == undefined ? "" : downloadURL,
                   gender: gender,
                   birthday: birthday / 1000,
                   interests: arr

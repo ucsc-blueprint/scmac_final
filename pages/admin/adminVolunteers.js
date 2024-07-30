@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import * as Sharing from 'expo-sharing';
 import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebaseConfig.js';
@@ -123,6 +124,7 @@ const exportAndUploadCSV = async (users) => {
     const csv = Papa.unparse(users);
     const fileUri = FileSystem.documentDirectory + 'users.csv';
     await FileSystem.writeAsStringAsync(fileUri, csv, { encoding: FileSystem.EncodingType.UTF8 });
+    Sharing.shareAsync(fileUri);
     Alert.alert('Export Successful', `CSV saved to ${fileUri}`);
   };
   

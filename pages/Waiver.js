@@ -27,7 +27,6 @@ export default function Waiver({route, navigation}) {
   const [parentGuardianEmail, setParentGuardianEmail] = useState('');
   const [parentGuardianPhone, setParentGuardianPhone] = useState('');
   const [parentGuardianAddress, setParentGuardianAddress] = useState('');
-  const [volunteerAgreement, setVolunteerAgreement] = useState('');
   const [volunteerSignature, setVolunteerSignature] = useState('');
   const [volunteerDate, setVolunteerDate] = useState('');
   const [parentGuardianSignature, setParentGuardianSignature] = useState('');
@@ -40,16 +39,19 @@ export default function Waiver({route, navigation}) {
   const handleSubmit = () => {
     // Firebase
     if (isChecked) {
-      if (lastName || firstInitial || volunteerName || volunteerEmail || volunteerPhoneCell || volunteerPhoneHome
-        || homeAddress || homeCity || homeZip || mailingAddress || mailingCity || mailingZip || emergencyContactName
-        || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || volunteerAgreement
-        || volunteerDate) {
+      if (lastName && firstInitial && volunteerName && volunteerEmail && volunteerPhoneCell && volunteerPhoneHome
+        && homeAddress && homeCity && homeZip && mailingAddress && mailingCity && mailingZip && emergencyContactName
+        && emergencyContactRelationship && emergencyContactPhoneCell && emergencyContactPhoneHome
+        && volunteerDate) {
           addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
             emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
             mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
             parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
             volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
           navigation.navigate("Events");
+      }
+      else{
+        Alert.alert("A field was left blank");
       }
     }
     else {
@@ -60,7 +62,7 @@ export default function Waiver({route, navigation}) {
   useEffect( () => {
     async function fetchData() {
       const { item } = route.params;
-      console.log("item: " + item.uid);
+      console.log("item: " + item);
 
       // await signup(item.email, item.pword, item.fname, item.lname, item.phone, item.interests, item.birthday, item.notifToken);
       // const user = await signup(item);
@@ -76,13 +78,12 @@ export default function Waiver({route, navigation}) {
       var userRef;
       if (auth.currentUser.uid) userRef = await getDoc(doc(db, "users", auth.currentUser.uid));
       else userRef = await getDoc(doc(db, "users", item.uid));
-      console.log("data: ")
-      console.log(userRef.data())
-      // setLastName(userRef.data().lname);
-      // setFirstInitial(userRef.data().fname[0]);
-      // setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
-      // setVolunteerEmail(userRef.data().email);
-      // setVolunteerPhoneCell(userRef.data().phone);
+      console.log("data: " + userRef.data())
+      setLastName(userRef.data().lname);
+      setFirstInitial(userRef.data().fname[0]);
+      setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
+      setVolunteerEmail(userRef.data().email);
+      setVolunteerPhoneCell(userRef.data().phone);
 
       // cpontinue doing all the fields from signup!!! slay
       // const event = item;
