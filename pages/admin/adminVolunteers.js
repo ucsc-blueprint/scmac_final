@@ -125,7 +125,7 @@ const exportAndUploadCSV = async (users) => {
     const fileUri = FileSystem.documentDirectory + 'users.csv';
     await FileSystem.writeAsStringAsync(fileUri, csv, { encoding: FileSystem.EncodingType.UTF8 });
     Sharing.shareAsync(fileUri);
-    Alert.alert('Export Successful', `CSV saved to ${fileUri}`);
+    // Alert.alert('Export Successful', `CSV saved to ${fileUri}`);
   };
   
 
