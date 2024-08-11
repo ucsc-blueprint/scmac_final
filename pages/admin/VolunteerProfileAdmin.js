@@ -43,9 +43,10 @@ const VolunteerProfileAdmin = ({route,navigation}) => {
           const eventDoc = doc(db, "events", el);
           const temp = await getDoc(eventDoc);
           const eventData = temp.data();
-          eventData["id"] = el;
-          // arr2.push(eventData);
-        if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+          if (el && eventData) {
+            eventData["id"] = el;
+            if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+          }
           setEventsData(arr2);
         });
       }

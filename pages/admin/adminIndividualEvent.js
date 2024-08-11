@@ -508,8 +508,7 @@ function Availability() {
               {
                 text: 'Submit',
                 onPress: (text) => {
-                  console.log(text, el, item)
-                  sendPushNotification(el.notifToken, el.uid, "Custom Notification", text);
+                  sendPushNotification(el['item'].notifToken, el['item'].uid, "Custom Notification", text);
                 }
               },
             ],
@@ -548,8 +547,7 @@ function Availability() {
               {
                 text: 'Submit',
                 onPress: (text) => {
-                  console.log(text, el, item)
-                  sendPushNotification(el.notifToken, el.uid, "Custom Notification", text);
+                  sendPushNotification(el['item'].notifToken, el['item'].uid, "Custom Notification", text);
                 }
               },
             ],

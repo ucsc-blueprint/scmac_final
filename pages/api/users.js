@@ -84,6 +84,7 @@ const getCurrentUserData = async () => {
   // userRef.forEach((doc) => {
   //   console.log(doc.data());
   // })
+  console.log(userRef.data())
   return userRef.data();
 }
 

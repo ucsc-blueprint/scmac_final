@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
@@ -13,27 +13,50 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync } from '../expoPushNotifications.js'
 
-export default function Login({navigation, expoPushToken}) {
+export default function Login({navigation}) {
   const [isEyeOpen, setIsEyeOpen] = useState(true);
   const [email, setEmail] = useState("");
   const [pword, setPword] = useState("");
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      if (user.uid) {
-        var document = await getDoc(doc(db, "waivers", user.uid));
-        if (document.exists()) var userDataAdmin = await checkPersistence(expoPushToken, user.uid);
-          if (!document.exists()) {
-            navigation.navigate("Waiver", user.uid);
-          }
-          else if(userDataAdmin){
-            navigation.navigate("AdminEvents");
-          }
-          else{
-            navigation.navigate("Events");
-          }
-      }
+      await registerForPushNotificationsAsync().then(async token => {
+        setExpoPushToken(token)
+
+        if (user.uid) {
+          var document = await getDoc(doc(db, "waivers", user.uid));
+          if (document.exists()) var userDataAdmin = await checkPersistence(token, user.uid);
+            if (!document.exists()) {
+              navigation.navigate("Waiver", user.uid);
+            }
+            else if(userDataAdmin){
+              navigation.navigate("AdminEvents");
+            }
+            else{
+              navigation.navigate("Events");
+            }
+        }
+      });
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      // return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
     });
   }, []);
 

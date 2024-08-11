@@ -32,7 +32,9 @@ export default function App() {
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    async function fetchData() {
+    await registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    console.log(expoPushToken)
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
@@ -42,31 +44,16 @@ export default function App() {
       console.log(response);
     });
 
-    return () => {
+    // return () => {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
-    };
+    // };
+}
+    fetchData().then(console.log("expo pus: " + expoPushToken));
+    
+
   }, []);
 
-  async function sendPushNotification(expoPushToken) {
-    const message = {
-      to: expoPushToken,
-      sound: 'default',
-      title: 'Test title',
-      body: 'Test body',
-      data: { testData: 'test data' },
-    };
-
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-  }
   // persistence: getRfireeactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>

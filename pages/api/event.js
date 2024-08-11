@@ -90,7 +90,7 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       shifts: shiftIDS,
       title: title,
       category: category,
-      notfis: notfis
+      notfis: notfis == undefined ? [] : notfis
     };
 
     await getUserNotifTokens(existingShiftIds, title, eventId);
@@ -151,6 +151,7 @@ async function scheduleNotif(title, body, trigger, eventId) {
 }
 
 async function sendPushNotification(notiToken, uid, title, body) {
+  console.log(notiToken)
   const url = "https://exp.host/--/api/v2/push/send";
   const payload = {
     to: notiToken,
