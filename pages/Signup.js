@@ -120,7 +120,7 @@ export default function Signup({navigation, expoPushToken}) {
         onCancel={hideDatePicker}
       />
       <View style={styles.birthday}>
-        <Text style={{fontSize:15, fontWeight:500 }}>Birthday: </Text>
+        <Text style={{fontSize:15, fontWeight:500 }}>Birthday (Optional): </Text>
         
         <TextInput style={{textDecorationLine: 'underline', fontWeight:500}} editable={false} onPressIn={()=> showDatePicker()} placeholder='Choose Date'>{birthday ? new Date(birthday).toDateString().split(' ').slice(1).join(' ') : ""}</TextInput>
       </View>
