@@ -15,6 +15,8 @@ import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import { SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { sendPushNotification } from './api/event.js';
 import * as Notifications from 'expo-notifications';
+import { ScrollView} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function Profile({navigation}) {
   const [uid, setUid] = useState("");
@@ -47,6 +49,28 @@ export default function Profile({navigation}) {
       console.log(error);
     });
   }
+
+  const deleteAccount = async () => {
+    Alert.alert('Confirm Deletion', 'Are you sure you want to delete your account? This action cannot be undone.', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteDoc(doc(db, "users", auth.currentUser.uid));
+            await deleteUser(auth.currentUser);
+            navigation.navigate("Login");
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+    ]);
+  };
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -260,9 +284,10 @@ export default function Profile({navigation}) {
             }
           } 
           setIsEditable(!isEditable)}}>
-          <Text style={styles.editText}>{isEditable?"Save":"Edit"}</Text>
+          <MaterialIcons name={isEditable ? "save" : "edit"} size={24} color="white" />
         </TouchableOpacity>
       </View>
+      <ScrollView style={{ flex: 1}} keyboardShouldPersistTaps="handled">
           <TouchableOpacity style={styles.selectButton} onPress={() => {if(isEditable) pickImage()}}>
             <View style={styles.imageContainer}>
               {downloadURL && <Image source={{ uri: downloadURL}} style={styles.image}/>}
@@ -338,20 +363,24 @@ export default function Profile({navigation}) {
       </View>)}
       
     </View>
-    <View style={{height:"25%"}}>
-    <Text style={{fontSize:15, textAlign: 'center', marginTop: '5%' }}>Events signed up for:</Text>
+    <View style={{height:"20%"}}>
+    <Text style={{fontSize:15, textAlign: 'center', marginTop: '5%', height: 200 }}>Events signed up for:</Text>
       <FlatList
           data={eventsData}
           renderItem={({ item }) => (
             <EventItem key={i++} item={item} nav={navigation} />
           )}
           keyExtractor={item => item.id}
+          nestedScrollEnabled={true}
         /> 
     </View>
-      
-      <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
-        <Text style ={styles.buttonText}> Sign Out </Text>
-      </TouchableOpacity>
+          <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
+            <Text style ={styles.buttonText}> Sign Out </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButton} onPress={deleteAccount}>
+            <Text style={styles.buttonDeleteText}>Delete Account</Text>
+          </TouchableOpacity>
+      </ScrollView>
       <View style={{position: "absolute", bottom:0, width:"100%"}}>
         <NavBar navigation={navigation}/>
       </View>
@@ -367,17 +396,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     backgroundColor: '#6A466C',
-    textAlign: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center',
     paddingTop: 80,
     paddingBottom: 10,
+    position: "relative",  
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginLeft: "55%",
-    marginBottom: "2%"
+    textAlign: "center",
+    flex: 1, 
+  },
+  editButton: {
+    position: "absolute",
+    right: 20,  
+    top: 85,
   },
   editText: {
     fontSize: 18, 
@@ -387,23 +422,22 @@ const styles = StyleSheet.create({
     marginTop: "2%"
   },
   imageContainer:{
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    fontSize:30,
+    width: 120, 
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3, 
+    borderColor: "#6A466C", 
     backgroundColor: '#D9D9D9',
-    marginBottom: 20,
-    marginTop: 30,
-    marginLeft: "37%",
     justifyContent: 'center',
     alignItems: 'center',
-    // position: 'relative'
+    marginBottom: 20,
+    marginTop: 30,
+    alignSelf: "center", 
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    // position: 'absolute',
+    width: "100%",
+    height: "100%",
+    borderRadius: 60,
   },
   name: {
     alignItems: 'center',
@@ -412,24 +446,48 @@ const styles = StyleSheet.create({
   },
   email: {
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,  // Adding a divider
+    borderColor: "#D9D9D9",
+    paddingBottom: 5,
+    marginHorizontal: 20,
   },
   number: {
     marginBottom: "1%",
-
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,  // Adding a divider
+    borderColor: "#D9D9D9",
+    paddingBottom: 5,
+    marginHorizontal: 20,
   },
   gender: {
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,  // Adding a divider
+    borderColor: "#D9D9D9",
+    paddingBottom: 5,
+    marginHorizontal: 20,
   },
   birthday: {
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,  // Adding a divider
+    borderColor: "#D9D9D9",
+    paddingBottom: 5,
+    marginHorizontal: 20,
   },
   interests: {
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,  // Adding a divider
+    borderColor: "#D9D9D9",
+    paddingBottom: 5,
+    marginHorizontal: 20,
   },
   signOutButton: {
     backgroundColor: '#EAEAEA',
@@ -448,7 +506,12 @@ const styles = StyleSheet.create({
       fontSize: 20,
       color: '#8C8C8C',
       alignItems: 'center',
-  }, 
+  },
+  buttonDeleteText: {
+      fontSize: 20,
+      color: '#FF0000',
+      alignItems: 'center',
+  },  
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -480,5 +543,17 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 21,
     color: '#000000',
+  },
+  deleteButton: {
+    backgroundColor: '#EAEAEA',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderColor: "#8C8C8C",
+    borderWidth: 1,
+    height: 40,
+    width: "80%",
+    alignSelf: 'center',
+    marginTop: "10%",
   },
 });
