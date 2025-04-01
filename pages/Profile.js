@@ -374,11 +374,11 @@ export default function Profile({navigation}) {
           nestedScrollEnabled={true}
         /> 
     </View>
-          <TouchableOpacity style={styles.deleteButton} onPress={deleteAccount}>
-            <Text style={styles.buttonText}>Delete Account</Text>
-          </TouchableOpacity>
           <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
             <Text style ={styles.buttonText}> Sign Out </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButton} onPress={deleteAccount}>
+            <Text style={styles.buttonDeleteText}>Delete Account</Text>
           </TouchableOpacity>
       </ScrollView>
       <View style={{position: "absolute", bottom:0, width:"100%"}}>
@@ -506,7 +506,12 @@ const styles = StyleSheet.create({
       fontSize: 20,
       color: '#8C8C8C',
       alignItems: 'center',
-  }, 
+  },
+  buttonDeleteText: {
+      fontSize: 20,
+      color: '#FF0000',
+      alignItems: 'center',
+  },  
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -540,15 +545,15 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   deleteButton: {
-    backgroundColor: '#FF4C4C',
+    backgroundColor: '#EAEAEA',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
     borderColor: "#8C8C8C",
     borderWidth: 1,
-    height: 50,
+    height: 40,
     width: "80%",
     alignSelf: 'center',
-    marginTop: 10,
+    marginTop: "10%",
   },
 });
