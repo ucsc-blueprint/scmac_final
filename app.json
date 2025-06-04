@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "scmac_final",
+    "name": "Santa Cruz Mountain Art Center",
     "slug": "scmac_final",
-    "version": "1.0.4",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,7 +13,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.blueprint.scmac"
+      "bundleIdentifier": "com.blueprint.scmac",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +32,8 @@
       "eas": {
         "projectId": "9be0065d-8936-41a5-a486-345e698e1933"
       }
-    }
-  },
+    },
     "owner": "scmac"
+  },
+  "owner": "scmac"
 }

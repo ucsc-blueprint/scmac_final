@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Waiver from './pages/Waiver';
 import Events from './pages/events';
+import ViewEvents from './pages/ViewEvents';
 import IndividualEvent from './pages/individualEvent';
 import NotificationsScreen from './pages/notifications';
 import ForgotPassword1 from './pages/ForgotPassword1';
@@ -69,6 +70,7 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Waiver" component={Waiver} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Events" component={Events} options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="ViewEvents" component={ViewEvents} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="IndividualEvent" component={IndividualEvent} options={
           { headerShown: true, 
             headerStyle: {backgroundColor: "#6A466C", height: 100}, 

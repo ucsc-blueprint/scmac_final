@@ -68,6 +68,12 @@ export default function Signup({navigation, expoPushToken}) {
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
       <Text style={styles.signUp}>Sign Up</Text>
+      <TouchableOpacity 
+        style={styles.eventsButton}
+        onPress={() => navigation.navigate("ViewEvents")}
+      >
+        <Text style={styles.eventsButtonText}>View Events</Text>
+      </TouchableOpacity>
       <Text style = {{fontSize:15, fontWeight: 500}}>First Name</Text>
       <TextInput 
       style={styles.input}
@@ -87,7 +93,7 @@ export default function Signup({navigation, expoPushToken}) {
               autoCapitalize='none'
       />
       <View style={styles.line} />
-      <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}} >Phone Number</Text>
+      <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}} >Phone Number (Optional)</Text>
       <TextInput style={styles.input} 
                onChangeText={text => setPhone(text)}
 
@@ -162,7 +168,7 @@ export default function Signup({navigation, expoPushToken}) {
       <TouchableOpacity 
       style={styles.continueButton}
               onPress={async () =>  {
-                if (fname && lname && email && pword && birthday && phone) {
+                if (fname && lname && email && pword && birthday) {
                   const arr = [];
                   if (pottery) arr.push("Pottery");
                   if (gallery) arr.push("Gallery");
@@ -177,7 +183,7 @@ export default function Signup({navigation, expoPushToken}) {
                       fname: fname,
                       lname: lname,
                       email: email,
-                      phone: phone,
+                      phone: phone || "", // Use empty string if phone is not provided
                       // admin: false,
                       birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
                       notifToken: expoPushToken,
@@ -263,5 +269,21 @@ const styles = StyleSheet.create({
     marginTop: "6%",
     marginBottom: "1%",
     flexDirection:'row',
+  },
+  eventsButton: {
+    position: 'absolute',
+    right: 25,
+    top: 130,
+    backgroundColor: '#6A466C',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventsButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
