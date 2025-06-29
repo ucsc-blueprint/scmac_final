@@ -1,0 +1,86 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 4438 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 50 800 Tm (# Newcomer Guide) Tj
+1 0 0 1 50 786 Tm () Tj
+1 0 0 1 50 772 Tm (Welcome to the project! This short guide introduces the overall structure of the codebase and highlights key concepts to help you get started quickly.) Tj
+1 0 0 1 50 758 Tm () Tj
+1 0 0 1 50 744 Tm (## General Structure) Tj
+1 0 0 1 50 730 Tm () Tj
+1 0 0 1 50 716 Tm (- **App Entry & Navigation**) Tj
+1 0 0 1 50 702 Tm (  - `App.js` sets up the React Navigation stack with screens like `Login`, `Signup`, `Events`, `AdminEvents`, and `Profile`. It also handles push-notification setup when the app loads.) Tj
+1 0 0 1 50 688 Tm () Tj
+1 0 0 1 50 674 Tm (- **Firebase Configuration**) Tj
+1 0 0 1 50 660 Tm (  - `firebaseConfig.js` initializes Firebase services \(Firestore, Authentication, and Storage\) and exports them for other modules to use.) Tj
+1 0 0 1 50 646 Tm () Tj
+1 0 0 1 50 632 Tm (- **Push Notifications**) Tj
+1 0 0 1 50 618 Tm (  - `expoPushNotifications.js` registers the device for Expo push notifications. It requests permissions and creates an Android channel if necessary.) Tj
+1 0 0 1 50 604 Tm () Tj
+1 0 0 1 50 590 Tm (- **API Helpers \(in `pages/api/` directory\)**) Tj
+1 0 0 1 50 576 Tm (  - `event.js` manages creating/editing events, scheduling reminders, and sending push notifications.) Tj
+1 0 0 1 50 562 Tm (  - `users.js` includes authentication helpers and utilities to load the current user or store the device's notification token.) Tj
+1 0 0 1 50 548 Tm () Tj
+1 0 0 1 50 534 Tm (- **UI Components**) Tj
+1 0 0 1 50 520 Tm (  - `components/NavBar.js` renders the bottom navigation bar. It checks whether the user is an admin to show extra links such as "Volunteers".) Tj
+1 0 0 1 50 506 Tm () Tj
+1 0 0 1 50 492 Tm (- **Screens \(in `pages/` directory\)**) Tj
+1 0 0 1 50 478 Tm (  - `events.js` lists upcoming events with filters and navigation to individual event pages.) Tj
+1 0 0 1 50 464 Tm (  - `signup.js` collects user details and interests before creating a user in Firebase Auth.) Tj
+1 0 0 1 50 450 Tm (  - `waiver.js` stores emergency contact information in Firestore when the user accepts the waiver.) Tj
+1 0 0 1 50 436 Tm (  - `profile.js` allows users to edit personal info, manage interests, and drop from events.) Tj
+1 0 0 1 50 422 Tm (  - `notifications.js` displays push notifications retrieved from Firestore.) Tj
+1 0 0 1 50 408 Tm (  - Admin-only screens live under `pages/admin/` for creating, editing, and viewing events, managing volunteers, and reviewing archived events.) Tj
+1 0 0 1 50 394 Tm () Tj
+1 0 0 1 50 380 Tm (## Important Concepts) Tj
+1 0 0 1 50 366 Tm () Tj
+1 0 0 1 50 352 Tm (1. **Firebase Integration**) Tj
+1 0 0 1 50 338 Tm (   - Firestore, Auth, and Storage are initialized in `firebaseConfig.js`. Many modules import these directly.) Tj
+1 0 0 1 50 324 Tm (2. **Push Notifications**) Tj
+1 0 0 1 50 310 Tm (   - The device's Expo notification token is registered on startup and stored in the user's document. Event reminders are scheduled in `pages/api/event.js`.) Tj
+1 0 0 1 50 296 Tm (3. **Admin vs. Regular Users**) Tj
+1 0 0 1 50 282 Tm (   - Screens check if the logged-in user is an admin to show different navigation options and event management features.) Tj
+1 0 0 1 50 268 Tm (4. **Events & Shifts**) Tj
+1 0 0 1 50 254 Tm (   - Events store shift IDs referencing separate `shifts` documents. Users sign up for shifts, and reminders are scheduled accordingly.) Tj
+1 0 0 1 50 240 Tm (5. **Data Flow**) Tj
+1 0 0 1 50 226 Tm (   - Screens fetch data from Firestore on mount or when focused. Updates are written back to Firestore directly from the UI.) Tj
+1 0 0 1 50 212 Tm () Tj
+1 0 0 1 50 198 Tm (## Next Steps to Explore) Tj
+1 0 0 1 50 184 Tm () Tj
+1 0 0 1 50 170 Tm (- Review the Firestore schema for events, shifts, users, waivers, and notifications.) Tj
+1 0 0 1 50 156 Tm (- Explore the admin-specific pages under `pages/admin/` to understand event creation and volunteer management.) Tj
+1 0 0 1 50 142 Tm (- Examine `expoPushNotifications.js` and `pages/api/event.js` to see how notifications are registered and scheduled.) Tj
+1 0 0 1 50 128 Tm (- Study `Login.js`, `Signup.js`, and `Waiver.js` to follow the user onboarding flow.) Tj
+1 0 0 1 50 114 Tm (- Consider how error cases are handled throughout the screens and API helper functions.) Tj
+1 0 0 1 50 100 Tm () Tj
+1 0 0 1 50 86 Tm (We hope this overview helps you get comfortable with the project. Happy coding!) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000004731 00000 n 
+trailer
+<< /Root 1 0 R /Size 6 >>
+startxref
+4801
+%%EOF
