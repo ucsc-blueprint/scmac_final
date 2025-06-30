@@ -1,0 +1,73 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2308 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 50 800 Tm (# Volunteer Guide) Tj
+1 0 0 1 50 786 Tm () Tj
+1 0 0 1 50 772 Tm (This guide walks you through the app features available to regular volunteers.) Tj
+1 0 0 1 50 758 Tm () Tj
+1 0 0 1 50 744 Tm (## Getting Started) Tj
+1 0 0 1 50 730 Tm () Tj
+1 0 0 1 50 716 Tm (- **Sign Up** using the in-app registration form if you don't have an account.) Tj
+1 0 0 1 50 702 Tm (- After signing in, you will see available events on the **Events** screen.) Tj
+1 0 0 1 50 688 Tm () Tj
+1 0 0 1 50 674 Tm (## Joining Events and Shifts) Tj
+1 0 0 1 50 660 Tm () Tj
+1 0 0 1 50 646 Tm (1. **Browse Events**) Tj
+1 0 0 1 50 632 Tm (   - Open the **Events** tab to see upcoming opportunities.) Tj
+1 0 0 1 50 618 Tm (   - Tap an event to view its description and available shifts.) Tj
+1 0 0 1 50 604 Tm () Tj
+1 0 0 1 50 590 Tm (2. **Sign Up for a Shift**) Tj
+1 0 0 1 50 576 Tm (   - Choose a shift that fits your schedule and tap **Join**.) Tj
+1 0 0 1 50 562 Tm (   - The app will schedule a reminder notification so you don't forget.) Tj
+1 0 0 1 50 548 Tm () Tj
+1 0 0 1 50 534 Tm (3. **Leave a Shift**) Tj
+1 0 0 1 50 520 Tm (   - If your plans change, open the event and tap **Leave** next to your shift.) Tj
+1 0 0 1 50 506 Tm (   - This cancels the reminder notification for that shift.) Tj
+1 0 0 1 50 492 Tm () Tj
+1 0 0 1 50 478 Tm (## Profile and Preferences) Tj
+1 0 0 1 50 464 Tm () Tj
+1 0 0 1 50 450 Tm (- Visit the **Profile** screen to update your contact information, interests, and emergency contacts.) Tj
+1 0 0 1 50 436 Tm (- You can also review events you've joined and drop them if necessary.) Tj
+1 0 0 1 50 422 Tm () Tj
+1 0 0 1 50 408 Tm (## Notifications) Tj
+1 0 0 1 50 394 Tm () Tj
+1 0 0 1 50 380 Tm (- The **Notifications** tab lists reminders and announcements sent by admins.) Tj
+1 0 0 1 50 366 Tm (- Make sure push notifications are enabled on your device so you don't miss updates.) Tj
+1 0 0 1 50 352 Tm () Tj
+1 0 0 1 50 338 Tm (## Getting Help) Tj
+1 0 0 1 50 324 Tm () Tj
+1 0 0 1 50 310 Tm (- If you encounter issues, reach out to an admin via the contact information in the event details.) Tj
+1 0 0 1 50 296 Tm (- The app also includes a simple FAQ in the **Profile** screen to address common questions.) Tj
+1 0 0 1 50 282 Tm () Tj
+1 0 0 1 50 268 Tm (Thank you for volunteering!) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000002601 00000 n 
+trailer
+<< /Root 1 0 R /Size 6 >>
+startxref
+2671
+%%EOF
