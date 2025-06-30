@@ -1,0 +1,78 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2785 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 50 800 Tm (# Admin Guide) Tj
+1 0 0 1 50 786 Tm () Tj
+1 0 0 1 50 772 Tm (This document explains how to manage the app as an administrator.) Tj
+1 0 0 1 50 758 Tm () Tj
+1 0 0 1 50 744 Tm (## Getting Started) Tj
+1 0 0 1 50 730 Tm () Tj
+1 0 0 1 50 716 Tm (- **Sign In** with your admin credentials.) Tj
+1 0 0 1 50 702 Tm (- The bottom navigation bar will show additional links only admins can see, such as **Admin Events** and **Volunteers**.) Tj
+1 0 0 1 50 688 Tm () Tj
+1 0 0 1 50 674 Tm (## Managing Events) Tj
+1 0 0 1 50 660 Tm () Tj
+1 0 0 1 50 646 Tm (1. **Create Events**) Tj
+1 0 0 1 50 632 Tm (   - Navigate to **Admin Events** and tap **Create Event**.) Tj
+1 0 0 1 50 618 Tm (   - Fill out the event details: title, description, date, and any shifts.) Tj
+1 0 0 1 50 604 Tm (   - Save the event to store it in Firestore and schedule reminders for volunteers.) Tj
+1 0 0 1 50 590 Tm () Tj
+1 0 0 1 50 576 Tm (2. **Edit or Duplicate Events**) Tj
+1 0 0 1 50 562 Tm (   - From the Admin Events list, choose an event and tap **Edit** to modify details.) Tj
+1 0 0 1 50 548 Tm (   - You can also duplicate an event to quickly create a similar one.) Tj
+1 0 0 1 50 534 Tm () Tj
+1 0 0 1 50 520 Tm (3. **Archive Events**) Tj
+1 0 0 1 50 506 Tm (   - After an event is complete, you may archive it. This keeps the event history but removes it from the active list.) Tj
+1 0 0 1 50 492 Tm () Tj
+1 0 0 1 50 478 Tm (4. **Manage Shifts and Volunteers**) Tj
+1 0 0 1 50 464 Tm (   - Within an individual event, you can see the list of shifts and which volunteers have signed up.) Tj
+1 0 0 1 50 450 Tm (   - Tap a volunteer name to view their profile or remove them from a shift if needed.) Tj
+1 0 0 1 50 436 Tm () Tj
+1 0 0 1 50 422 Tm (## Sending Notifications) Tj
+1 0 0 1 50 408 Tm () Tj
+1 0 0 1 50 394 Tm (- Admins can send push notifications to all volunteers or to those registered for specific events.) Tj
+1 0 0 1 50 380 Tm (- Use the **Send Message** option inside an event to broadcast important updates.) Tj
+1 0 0 1 50 366 Tm () Tj
+1 0 0 1 50 352 Tm (## Viewing Volunteers) Tj
+1 0 0 1 50 338 Tm () Tj
+1 0 0 1 50 324 Tm (- The **Volunteers** screen lists every registered user along with their contact information and interests.) Tj
+1 0 0 1 50 310 Tm (- Export volunteer data as CSV if you need a roster for offline use.) Tj
+1 0 0 1 50 296 Tm () Tj
+1 0 0 1 50 282 Tm (## Tips and Best Practices) Tj
+1 0 0 1 50 268 Tm () Tj
+1 0 0 1 50 254 Tm (- Keep event details and shift times accurate so volunteers can plan accordingly.) Tj
+1 0 0 1 50 240 Tm (- Regularly archive completed events to keep the app organized.) Tj
+1 0 0 1 50 226 Tm (- Check the Notifications screen to verify messages have been delivered.) Tj
+1 0 0 1 50 212 Tm () Tj
+1 0 0 1 50 198 Tm (Happy organizing!) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003078 00000 n 
+trailer
+<< /Root 1 0 R /Size 6 >>
+startxref
+3148
+%%EOF
