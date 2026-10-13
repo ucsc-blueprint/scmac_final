@@ -44,7 +44,7 @@ export default function Profile({navigation}) {
 
   const signOutFunc = async () => {
     signOut(auth).then(() => {
-      navigation.navigate("Login");
+      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
     }).catch((error) => {
       console.log(error);
     });
@@ -140,7 +140,7 @@ export default function Profile({navigation}) {
       setEmail(data.email);
       setPhoneNumber(data.phone);
       setGender(data.gender);
-      setBirthday(data.birthday*1000);
+      setBirthday(data.birthday ? data.birthday*1000 : "");
       setInterests(data.interests);
       if (data.notifications) setNotifs(data.notifications);
       data.interests.forEach((el) => {
@@ -321,7 +321,7 @@ export default function Profile({navigation}) {
     <View style={styles.birthday}>
       <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
       
-      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{new Date(birthday).toDateString().split(' ').slice(1).join(' ')}</TextInput>
+      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{birthday ? new Date(birthday).toDateString().split(' ').slice(1).join(' ') : 'Not provided'}</TextInput>
     </View>
     <View style={styles.interests}>
       <Text style={{fontSize:15, marginLeft:30 }}>Interests:     <Text style={{fontSize:15, marginLeft:30 }}>{!isEditable?interests ? interests.join(', ') : "":""}</Text></Text>

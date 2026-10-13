@@ -2,9 +2,9 @@ import Checkbox from 'expo-checkbox';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
 import { addWaiver } from "./api/waivers.js"
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
-import { signup } from './api/users.js';
+import { signOut } from 'firebase/auth';
 
 export default function Waiver({route, navigation}) {
   const [lastName, setLastName] = useState('');
@@ -61,24 +61,17 @@ export default function Waiver({route, navigation}) {
 
   useEffect( () => {
     async function fetchData() {
-      const { item } = route.params;
-      console.log("item: " + item);
-
-      // await signup(item.email, item.pword, item.fname, item.lname, item.phone, item.interests, item.birthday, item.notifToken);
-      // const user = await signup(item);
-      // console.log(user)
-
-      if (item) await setDoc(doc(db, "users", item.uid), item);
-      console.log(auth.currentUser.uid)
-
-      if (auth.currentUser.uid) setUid(auth.currentUser.uid);
-      else setUid(item.uid)
-      // console.log(auth.currentUser.uid)
-
-      var userRef;
-      if (auth.currentUser.uid) userRef = await getDoc(doc(db, "users", auth.currentUser.uid));
-      else userRef = await getDoc(doc(db, "users", item.uid));
-      console.log("data: " + userRef.data())
+      const userId = auth.currentUser?.uid || route.params?.uid;
+      if (!userId) {
+        navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+        return;
+      }
+      setUid(userId);
+      const userRef = await getDoc(doc(db, 'users', userId));
+      if (!userRef.exists()) {
+        Alert.alert('Account profile missing', 'Please contact support to finish setting up your account.');
+        return;
+      }
       setLastName(userRef.data().lname);
       setFirstInitial(userRef.data().fname[0]);
       setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
@@ -89,7 +82,7 @@ export default function Waiver({route, navigation}) {
       // const event = item;
       // const eventData = event.data();
     }
-    fetchData();
+    fetchData().catch(error => Alert.alert('Unable to load account', error.message));
  }, [])
 
   return (
@@ -119,6 +112,12 @@ export default function Waiver({route, navigation}) {
       <Text style={styles.scmacEmail}>www.mountainartcenter.org</Text> 
       <Text style={styles.title}>VOLUNTEER WAIVER</Text>
       <Text style={styles.subtitle}>Release Agreement & Emergency Contact Information</Text>
+      <TouchableOpacity onPress={async () => {
+        await signOut(auth);
+        navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+      }}>
+        <Text style={{ color: '#6A466C', paddingVertical: 12 }}>Sign Out</Text>
+      </TouchableOpacity>
       <View style={styles.formContainer}>
         <Text style={styles.subtitle}>Emergency Contact Information</Text>
         <Text style={styles.formItem}>Volunteer Name:</Text>

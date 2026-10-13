@@ -5,11 +5,11 @@ import { Alert } from 'react-native';
 
 const checkPersistence = async (notifToken, uid) => {
   //Update the user's document with the notification token
-  await updateDoc(doc(db, "users", uid), { notifToken: notifToken }, { merge: true });
+  if (notifToken) await updateDoc(doc(db, "users", uid), { notifToken });
   
   // Return the user object on successful login and Firestore update
   const userData = await getDoc(doc(db, "users", uid));
-  return userData.data().admin;
+  return userData.data()?.admin === true;
 }
 
 // Login function

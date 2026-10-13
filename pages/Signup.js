@@ -8,7 +8,8 @@ import Checkbox from 'expo-checkbox';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig.js';
+import { auth, db } from '../firebaseConfig.js';
+import { doc, setDoc } from 'firebase/firestore';
 
 const items = [{
   id: '0',
@@ -168,7 +169,7 @@ export default function Signup({navigation, expoPushToken}) {
       <TouchableOpacity 
       style={styles.continueButton}
               onPress={async () =>  {
-                if (fname && lname && email && pword && birthday) {
+                if (fname.trim() && lname.trim() && email.trim() && pword) {
                   const arr = [];
                   if (pottery) arr.push("Pottery");
                   if (gallery) arr.push("Gallery");
@@ -176,23 +177,24 @@ export default function Signup({navigation, expoPushToken}) {
                   if (facilities) arr.push("Facilities");
                   // await signup(email, pword, fname, lname, phone, arr, birthday, expoPushToken);
                   try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, pword);
+                    const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), pword);
                     const user = userCredential.user;
                     const data = {
                       uid: user.uid,
-                      fname: fname,
-                      lname: lname,
-                      email: email,
+                      fname: fname.trim(),
+                      lname: lname.trim(),
+                      email: email.trim(),
                       phone: phone || "", // Use empty string if phone is not provided
-                      // admin: false,
-                      birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
-                      notifToken: expoPushToken,
+                      admin: false,
+                      birthday: birthday ? Math.floor(birthday.getTime() / 1000) : null,
+                      notifToken: expoPushToken || '',
                       downloadURL: "",
                       notifications: [],
                       gender: "",
                       interests: arr
                     };
-                    navigation.navigate("Waiver", {item: data});
+                    await setDoc(doc(db, 'users', user.uid), data);
+                    navigation.reset({ index: 0, routes: [{ name: 'Waiver', params: { uid: user.uid } }] });
                   } catch (error) {
                     // console.error("Signup error:", error.code);
                     if (error.code == "auth/email-already-exists") Alert.alert("Email already exists");
@@ -200,7 +202,9 @@ export default function Signup({navigation, expoPushToken}) {
                     if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
                     if (error.code == "auth/invalid-password") Alert.alert("Invalid Password (Must be at least 6 characters)");
                     if (error.code == "auth/weak-password") Alert.alert("Password must be at least 6 characters");
-                    // throw error;
+                    if (!['auth/email-already-exists', 'auth/email-already-in-use', 'auth/invalid-email', 'auth/invalid-password', 'auth/weak-password'].includes(error.code)) {
+                      Alert.alert('Unable to create account', error.message);
+                    }
                   }
                 } else {
                   Alert.alert("Cannot leave field empty");

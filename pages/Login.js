@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
@@ -12,7 +13,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
-import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync } from '../expoPushNotifications.js'
 
 export default function Login({navigation}) {
@@ -20,46 +20,31 @@ export default function Login({navigation}) {
   const [email, setEmail] = useState("");
   const [pword, setPword] = useState("");
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
+    let active = true;
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) return;
-      await registerForPushNotificationsAsync().then(async token => {
-        setExpoPushToken(token)
-
-        if (user.uid) {
-          var document = await getDoc(doc(db, "waivers", user.uid));
-          if (document.exists()) var userDataAdmin = await checkPersistence(token, user.uid);
-            if (!document.exists()) {
-              navigation.navigate("Waiver", user.uid);
-            }
-            else if(userDataAdmin){
-              navigation.navigate("AdminEvents");
-            }
-            else{
-              navigation.navigate("Events");
-            }
+      try {
+        const token = await registerForPushNotificationsAsync().catch(error => {
+          console.warn('Push notification registration failed:', error);
+          return '';
+        });
+        if (!active) return;
+        setExpoPushToken(token || '');
+        const waiver = await getDoc(doc(db, 'waivers', user.uid));
+        if (!active) return;
+        if (!waiver.exists()) {
+          navigation.reset({ index: 0, routes: [{ name: 'Waiver', params: { uid: user.uid } }] });
+        } else {
+          const admin = await checkPersistence(token, user.uid);
+          if (active) navigation.reset({ index: 0, routes: [{ name: admin ? 'AdminEvents' : 'Events' }] });
         }
-      });
-  
-      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-      });
-  
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-      });
-  
-      // return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
+      } catch (error) {
+        if (active) Alert.alert('Unable to load account', error.message);
+      }
     });
-    return unsubscribe;
-  }, []);
+    return () => { active = false; unsubscribe(); };
+  }, [navigation]));
 
 
   return (
@@ -131,12 +116,6 @@ export default function Login({navigation}) {
                 if (user) {
                   setEmail("");
                   setPword("");
-                  if(user.admin){
-                    navigation.navigate("AdminEvents");
-                  }
-                  else{
-                    navigation.navigate("Events");
-                  }
                 }
               } else {
                 Alert.alert("Cannot leave field empty");
