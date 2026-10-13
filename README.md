@@ -48,8 +48,8 @@ npm run android
 
 ## Demo UI and rollback
 
-The visual refresh is on `codex/demo-ui`. The previous working UI is preserved on
-`main` at commit `0bb20bb` and the local branch `codex/pre-ui-demo-0bb20bb`.
-With a clean working tree, switch back with `git switch main`, then reload the
+The visual refresh is on `main` and `codex/demo-ui`. The previous working UI is
+preserved at commit `0bb20bb` on branch `codex/pre-ui-demo-0bb20bb`.
+With a clean working tree, switch back with `git switch codex/pre-ui-demo-0bb20bb`, then reload the
 running app by pressing `r` in the Metro terminal. No native rebuild is needed
 for switching between these UI versions.
