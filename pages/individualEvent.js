@@ -23,7 +23,7 @@ export default function EventDetailScreen({route,navigation}) {
         <Text style={styles.textItem}>{item.label}</Text>
         {/* {console.log(item.value)}
         {console.log(value)} */}
-        {item.value === value && (
+        {item.value === value?.value && (
           <AntDesign
             style={styles.icon}
             color="black"
@@ -49,32 +49,19 @@ export default function EventDetailScreen({route,navigation}) {
       // const event = item;
       // console.log(item.item.id)
       const eventData = item.item;
-      eventData.shifts.forEach(async element => {
-        const shiftDoc = doc(db, 'shifts', element);
-        const shift = await getDoc(doc(db, 'shifts', element));
-        // console.log(shift.data())
-        arr.push({shift: shiftDoc, label: shift.data().user.includes(auth.currentUser.uid) ? new Date(shift.data().startTime*1000).toLocaleString('en-US', {
-          weekday: 'short', // 'Fri'
-          month: 'short',   // 'May'
-          day: 'numeric',   // '03'
-          hour: '2-digit',  // '02' or '14'
-          minute: '2-digit' // '30'
-      }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " (Already Signed Up)" : 
-      new Date(shift.data().startTime*1000).toLocaleString('en-US', {
-        weekday: 'short', // 'Fri'
-        month: 'short',   // 'May'
-        day: 'numeric',   // '03'
-        hour: '2-digit',  // '02' or '14'
-        minute: '2-digit' // '30'
-    }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
-      });
-      arr.sort(function(a,b){
-        // Turn your strings into dates, and then subtract them
-        // to get a value that is either negative, positive, or zero.
-        return new Date(b.date) - new Date(a.date);
-      });
-      setShiftsData(arr);
-
+      const loadedShifts = await Promise.all((eventData.shifts || []).map(async shiftId => {
+        const shiftRef = doc(db, 'shifts', shiftId);
+        const snapshot = await getDoc(shiftRef);
+        if (!snapshot.exists()) return null;
+        const shift = snapshot.data();
+        const start = new Date(shift.startTime * 1000).toLocaleString('en-US', {
+          weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+        });
+        const end = new Date(shift.endTime * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        const signedUp = (shift.user || []).includes(auth.currentUser?.uid);
+        return { shift: shiftRef, label: `${start} – ${end}${signedUp ? ' (Already Signed Up)' : ''}`, value: shiftId, startTime: shift.startTime };
+      }));
+      setShiftsData(loadedShifts.filter(Boolean).sort((a, b) => a.startTime - b.startTime));
       eventData.materials.forEach(async element => {
         const el = {...element,
                     isSelected: false};
@@ -138,18 +125,23 @@ export default function EventDetailScreen({route,navigation}) {
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
               data={shiftsData}
-              maxHeight={300}
+              maxHeight={320}
+              mode="modal"
+              containerStyle={{ backgroundColor: colors.surface, borderRadius: 16, borderColor: colors.border, padding: 8 }}
+              activeColor={colors.soft}
+              disable={!shiftsData.length}
               labelField="label"
               valueField="value"
-              placeholder="Select item"
+              placeholder={shiftsData.length ? "Choose a work shift" : "No shifts available"}
               searchPlaceholder="Search..."
-              value={value}
+              value={value?.value || null}
               onChange={item => {
                 // console.log(item)
                 setValue(item);
               }}
               renderItem={renderItem}
             />
+          {!shiftsData.length && <Text style={{ marginHorizontal: 24, marginTop: 10, color: colors.muted, fontSize: 13, lineHeight: 20 }}>This event has no volunteer shifts yet. An organizer can add them.</Text>}
           <Text style={styles.sectionTitle}>Materials Checklist</Text>
           {materials ? materials.map((material,index) => (
             <View key={index} style={styles.checkboxContainer}>
@@ -380,7 +372,7 @@ const styles = StyleSheet.create({
   subtitle: { ...originalStyles.subtitle, fontSize: 14, color: colors.muted, lineHeight: 22, marginHorizontal: 24, marginTop: 12 },
   sectionTitle: { ...originalStyles.sectionTitle, fontSize: 17, color: colors.ink, fontWeight: "600", marginHorizontal: 24, marginTop: 28, marginBottom: 12 },
   description: { ...originalStyles.description, fontSize: 15, lineHeight: 24, color: colors.muted, marginHorizontal: 24 },
-  dropdown: { ...originalStyles.dropdown, ...field, height: 56, width: "auto", marginHorizontal: 24, shadowOpacity: 0, elevation: 0 },
+  dropdown: { ...field, height: 56, marginHorizontal: 24, paddingHorizontal: 14, shadowOpacity: 0, elevation: 0 },
   button: { ...originalStyles.button, ...button, marginHorizontal: 24, marginTop: 24, marginBottom: 40 },
   buttonText: { ...originalStyles.buttonText, fontSize: 16, fontWeight: "600" },
   textInput: { ...originalStyles.textInput, ...field, minHeight: 100, marginHorizontal: 24 },
