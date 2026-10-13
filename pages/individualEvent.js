@@ -1,3 +1,4 @@
+import { colors, card, field, button } from '../components/ui';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Switch } from 'react-native'; 
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
@@ -258,7 +259,7 @@ export default function EventDetailScreen({route,navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F8F8',
@@ -371,4 +372,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F1F2",
     margin: 10,
   },
+});
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background },
+  title: { ...originalStyles.title, fontSize: 30, color: colors.ink, fontWeight: "700", textAlign: "left", marginHorizontal: 24, marginTop: 28, letterSpacing: -0.7 },
+  subtitle: { ...originalStyles.subtitle, fontSize: 14, color: colors.muted, lineHeight: 22, marginHorizontal: 24, marginTop: 12 },
+  sectionTitle: { ...originalStyles.sectionTitle, fontSize: 17, color: colors.ink, fontWeight: "600", marginHorizontal: 24, marginTop: 28, marginBottom: 12 },
+  description: { ...originalStyles.description, fontSize: 15, lineHeight: 24, color: colors.muted, marginHorizontal: 24 },
+  dropdown: { ...originalStyles.dropdown, ...field, height: 56, width: "auto", marginHorizontal: 24, shadowOpacity: 0, elevation: 0 },
+  button: { ...originalStyles.button, ...button, marginHorizontal: 24, marginTop: 24, marginBottom: 40 },
+  buttonText: { ...originalStyles.buttonText, fontSize: 16, fontWeight: "600" },
+  textInput: { ...originalStyles.textInput, ...field, minHeight: 100, marginHorizontal: 24 },
+  checkboxContainer: { ...originalStyles.checkboxContainer, marginHorizontal: 24, paddingLeft: 0, paddingVertical: 8 },
+  label: { ...originalStyles.label, fontSize: 15, color: colors.ink }
 });

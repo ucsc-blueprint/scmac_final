@@ -1,3 +1,4 @@
+import { colors, card, field, button } from '../components/ui';
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar.js';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, FlatList } from 'react-native';
@@ -7,7 +8,7 @@ import { signOut } from 'firebase/auth';
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { doc, getDoc, getDocs, snapshotEqual, updateDoc, query, collection, where, documentId, arrayRemove, deleteDoc } from 'firebase/firestore';
-import * as ImagePicker from 'expo-image-picker'; 
+import * as ImagePicker from 'expo-image-picker';
 // import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { storage } from '../firebaseConfig.js';
@@ -39,7 +40,7 @@ export default function Profile({navigation}) {
   const [downloadURL, setImageURL] = useState("");
   const [eventsData, setEventsData] = useState([]);
   const [notifs, setNotifs] = useState([]);
- 
+
   let i = 0;
 
   const signOutFunc = async () => {
@@ -85,7 +86,7 @@ export default function Profile({navigation}) {
     setBirthday(date);
     hideDatePicker();
   };
-    
+
   const pickImage = async () =>{
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All, //all:img, videos
@@ -113,7 +114,7 @@ export default function Profile({navigation}) {
         setImageURL(downloadURL);
         // setImage(downloadURL);
       })
-    
+
 
     Alert.alert('Photo Uploaded!');
 };
@@ -155,7 +156,7 @@ export default function Profile({navigation}) {
     fetchData();
  }, [])
 
- const EventItem = ({ item, nav }) => (                                    
+ const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>{
     if (admin) {nav.navigate("AdminIndividualEvent", {item: item})}
     else {nav.navigate("IndividualEvent", {item: item})}
@@ -171,12 +172,12 @@ export default function Profile({navigation}) {
           if (item.shifts.length !== 0) {
             const q = query(
               collection(db, "shifts"),
-              where(documentId(), "in", 
+              where(documentId(), "in",
                 item.shifts
               ),
             );
             const productsDocsSnap = await getDocs(q);
-      
+
             productsDocsSnap.forEach(async (document) => {
               // console.log(doc.id)
               if (document.data().user.includes(auth.currentUser.uid)) {
@@ -265,7 +266,7 @@ export default function Profile({navigation}) {
               setInterests(arr);
 
               //HANDLE ERROR HANDLING HERE (CHECK ONCE THEY EDIT IF THEY ARE VALID EMAIL, NUMBER, ETC)
-              
+
               const userDoc = doc(db, "users", auth.currentUser.uid);
               if (!firstName || !lastName|| !email|| !phoneNumber) {
                 Alert.alert("Cannot leave field empty. Click edit again to learn more");
@@ -282,35 +283,35 @@ export default function Profile({navigation}) {
                   interests: arr
                 });
             }
-          } 
+          }
           setIsEditable(!isEditable)}}>
-          <MaterialIcons name={isEditable ? "save" : "edit"} size={24} color="white" />
+          <MaterialIcons name={isEditable ? "save" : "edit"} size={24} color={colors.primary} />
         </TouchableOpacity>
       </View>
       <ScrollView style={{ flex: 1}} keyboardShouldPersistTaps="handled">
           <TouchableOpacity style={styles.selectButton} onPress={() => {if(isEditable) pickImage()}}>
             <View style={styles.imageContainer}>
-              {downloadURL && <Image source={{ uri: downloadURL}} style={styles.image}/>}
+              {downloadURL ? <Image source={{ uri: downloadURL}} style={styles.image}/> : <Text style={{ fontSize: 38, color: colors.primary, fontWeight: '600' }}>{firstName?.charAt(0)}{lastName?.charAt(0)}</Text>}
             </View>
           </TouchableOpacity>
     <View style={styles.name}>
       <View style={{flexDirection:'row'}}>
-        <TextInput style={{fontSize: 20, fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setFirstName}>{firstName}</TextInput>
+        <TextInput style={{fontSize: 24, fontWeight: "600", color: colors.ink, backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8}} editable={isEditable} onChangeText={setFirstName}>{firstName}</TextInput>
         <Text> </Text>
-        <TextInput style={{fontSize: 20, fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setLastName}>{lastName}</TextInput>
+        <TextInput style={{fontSize: 24, fontWeight: "600", color: colors.ink, backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8}} editable={isEditable} onChangeText={setLastName}>{lastName}</TextInput>
       </View>
     </View>
     <View style={styles.email}>
-        <Text style={{fontSize:15, marginLeft:30 }}>Email:     </Text>
-        <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setEmail}>{email}</TextInput>
+        <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>Email:     </Text>
+        <TextInput style={{color: colors.ink, fontSize: 15, width: "100%", backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8, paddingVertical: 4}} editable={isEditable} onChangeText={setEmail}>{email}</TextInput>
     </View>
     <View style={styles.number}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Phone number:     </Text>
-      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setPhoneNumber}>{phoneNumber}</TextInput>
+      <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>Phone number:     </Text>
+      <TextInput style={{color: colors.ink, fontSize: 15, width: "100%", backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8, paddingVertical: 4}} editable={isEditable} onChangeText={setPhoneNumber}>{phoneNumber}</TextInput>
     </View>
     <View style={styles.gender}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Gender:     </Text>
-      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setGender}>{gender}</TextInput>
+      <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>Gender:     </Text>
+      <TextInput style={{color: colors.ink, fontSize: 15, width: "100%", backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8, paddingVertical: 4}} editable={isEditable} onChangeText={setGender}>{gender}</TextInput>
     </View>
     <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -319,12 +320,12 @@ export default function Profile({navigation}) {
         onCancel={hideDatePicker}
       />
     <View style={styles.birthday}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
-      
-      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{birthday ? new Date(birthday).toDateString().split(' ').slice(1).join(' ') : 'Not provided'}</TextInput>
+      <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>Birthday:     </Text>
+
+      <TextInput style={{color: colors.ink, fontSize: 15, width: "100%", backgroundColor:isEditable?colors.soft:"transparent", borderRadius: 8, paddingVertical: 4}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{birthday ? new Date(birthday).toDateString().split(' ').slice(1).join(' ') : 'Not provided'}</TextInput>
     </View>
     <View style={styles.interests}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Interests:     <Text style={{fontSize:15, marginLeft:30 }}>{!isEditable?interests ? interests.join(', ') : "":""}</Text></Text>
+      <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>Interests:     <Text style={{fontSize:11, color: colors.muted, fontWeight: "600", marginBottom: 6 }}>{!isEditable?interests ? interests.join(', ') : "":""}</Text></Text>
       {!isEditable ? (
         <View></View>
     ): (<View>
@@ -361,20 +362,13 @@ export default function Profile({navigation}) {
         <Text style={{fontSize:15, fontWeight:400}}>Facilities</Text>
       </View>
       </View>)}
-      
+
     </View>
-    <View style={{height:"20%"}}>
-    <Text style={{fontSize:15, textAlign: 'center', marginTop: '5%', height: 200 }}>Events signed up for:</Text>
-      <FlatList
-          data={eventsData}
-          renderItem={({ item }) => (
-            <EventItem key={i++} item={item} nav={navigation} />
-          )}
-          keyExtractor={item => item.id}
-          nestedScrollEnabled={true}
-        /> 
+    <View style={{ marginTop: 24, marginBottom: 12 }}>
+      <Text style={{ fontSize: 17, color: colors.ink, fontWeight: '600', marginHorizontal: 24, marginBottom: 16 }}>Your upcoming events</Text>
+      {eventsData.length ? eventsData.map(item => <EventItem key={item.id} item={item} nav={navigation}/>) : <Text style={{ color: colors.muted, fontSize: 14, lineHeight: 22, marginHorizontal: 24 }}>Your next creative adventure starts on the Events page.</Text>}
     </View>
-          <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
+          <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}>
             <Text style ={styles.buttonText}> Sign Out </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.deleteButton} onPress={deleteAccount}>
@@ -388,7 +382,7 @@ export default function Profile({navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F8F8',
@@ -396,43 +390,43 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     backgroundColor: '#6A466C',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 80,
     paddingBottom: 10,
-    position: "relative",  
+    position: "relative",
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
     textAlign: "center",
-    flex: 1, 
+    flex: 1,
   },
   editButton: {
     position: "absolute",
-    right: 20,  
+    right: 20,
     top: 85,
   },
   editText: {
-    fontSize: 18, 
+    fontSize: 18,
     fontWeight: '400',
     color: 'white',
     marginLeft:"45%",
     marginTop: "2%"
   },
   imageContainer:{
-    width: 120, 
+    width: 120,
     height: 120,
     borderRadius: 60,
-    borderWidth: 3, 
-    borderColor: "#6A466C", 
+    borderWidth: 3,
+    borderColor: "#6A466C",
     backgroundColor: '#D9D9D9',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 30,
-    alignSelf: "center", 
+    alignSelf: "center",
   },
   image: {
     width: "100%",
@@ -496,7 +490,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#8C8C8C",
     borderWidth: 1,
-    height: "5.5%", 
+    height: "5.5%",
     width: "80%",
     marginLeft: "10%",
     marginTop: "7%",
@@ -511,7 +505,7 @@ const styles = StyleSheet.create({
       fontSize: 20,
       color: '#FF0000',
       alignItems: 'center',
-  },  
+  },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -556,4 +550,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: "10%",
   },
+});
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background },
+  header: { ...originalStyles.header, backgroundColor: colors.background, paddingTop: 64, paddingBottom: 22 },
+  headerText: { ...originalStyles.headerText, color: colors.ink, textAlign: "left", fontSize: 32, fontWeight: "700", paddingLeft: 24, letterSpacing: -0.7 },
+  editButton: { ...originalStyles.editButton, top: 72, right: 24 },
+  editText: { ...originalStyles.editText, color: colors.primary, fontSize: 14, fontWeight: "600", marginLeft: 0, marginTop: 0 },
+  imageContainer: { ...originalStyles.imageContainer, borderColor: colors.soft, borderWidth: 6, backgroundColor: colors.soft },
+  email: { ...originalStyles.email, flexDirection: "column", alignItems: "flex-start", ...card, paddingVertical: 18, paddingHorizontal: 14, marginBottom: 10 },
+  number: { ...originalStyles.number, flexDirection: "column", alignItems: "flex-start", ...card, paddingVertical: 18, paddingHorizontal: 14, marginBottom: 10 },
+  gender: { ...originalStyles.gender, flexDirection: "column", alignItems: "flex-start", ...card, paddingVertical: 18, paddingHorizontal: 14, marginBottom: 10 },
+  birthday: { ...originalStyles.birthday, flexDirection: "column", alignItems: "flex-start", ...card, paddingVertical: 18, paddingHorizontal: 14, marginBottom: 10 },
+  interests: { ...originalStyles.interests, flexDirection: "column", alignItems: "flex-start", ...card, paddingVertical: 18, paddingHorizontal: 14, marginBottom: 10 },
+  signOutButton: { ...originalStyles.signOutButton, ...button, marginHorizontal: 24, marginTop: 24 },
+  buttonText: { ...originalStyles.buttonText, color: "#FFFFFF", fontSize: 16, fontWeight: "600" },
+  buttonDeleteText: { ...originalStyles.buttonDeleteText, color: "#A04B56", fontSize: 14, fontWeight: "500" },
+  deleteButton: { ...originalStyles.deleteButton, minHeight: 54, height: 54, padding: 0, backgroundColor: "transparent", borderColor: colors.border, borderWidth: 1, borderRadius: 14, marginHorizontal: 24, marginBottom: 110 }
 });

@@ -1,92 +1,38 @@
-// import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {auth} from "../firebaseConfig"
-import {getCurrentUserData} from '../pages/api/users';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
+import { auth } from '../firebaseConfig';
+import { getCurrentUserData } from '../pages/api/users';
+import { colors } from './ui';
 
-const Navbar = ({navigation}) => {
-  const [admin, setAdmin] = useState();
-
-  useEffect( () => {
-    async function fetchData() {
-      data = await getCurrentUserData();
-      setAdmin(data.admin);
-      console.log(data.admin);
-    }
-    fetchData();
+export default function Navbar({ navigation }) {
+  const [admin, setAdmin] = useState(false);
+  const route = useRoute();
+  const insets = useSafeAreaInsets();
+  useEffect(() => {
+    let active = true;
+    if (auth.currentUser) getCurrentUserData().then(data => {
+      if (active) setAdmin(data?.admin === true);
+    }).catch(error => console.warn('Unable to load navigation role:', error));
+    return () => { active = false; };
   }, []);
-
-  return (
-    <View style={styles.navbarContainer}>
-      <TouchableOpacity
-        style={styles.navItem}
-        
-        onPress={() => {
-          if (admin) {
-            navigation.navigate("AdminEvents");
-          }
-          else {
-            navigation.navigate("Events");
-          }
-        }}
-        //if admin go to admin events
-      >
-        <Icon name="calendar-outline" size={25} color="#4F4F4F" />
-        <Text style={styles.navText}>Events</Text>
-        
-      </TouchableOpacity>
-
-        <TouchableOpacity
-        style={styles.navItem}
-        onPress={() => navigation.navigate("Notifications")}
-      >
-        <Icon name="notifications-outline" size={25} color="#4F4F4F" />
-        <Text style={styles.navText}>Notifications</Text>
-        
-      </TouchableOpacity>
-
-        {admin ? 
-      <TouchableOpacity
-        style={styles.navItem}
-        onPress={() => navigation.navigate("Volunteers")}
-      >
-        <Icon name="people-outline" size={25} color="#4F4F4F" />
-
-        <Text style={styles.navText}>Volunteers</Text>
-        
-      </TouchableOpacity>
-: ""}
-      
-
-      <TouchableOpacity
-        style={styles.navItem}
-        onPress={() => navigation.navigate("Profile")}
-      >
-        <Icon name="person-outline" size={25} color="#4F4F4F" />
-        <Text style={styles.navText}>Profile</Text>
-        
-      </TouchableOpacity>
-    </View>
-  );
-};
-
+  const tabs = [
+    { label: 'Events', icon: 'calendar', screen: admin ? 'AdminEvents' : 'Events', active: ['Events', 'AdminEvents', 'ViewEvents'] },
+    { label: 'Updates', icon: 'bell', screen: 'Notifications', active: ['Notifications'] },
+    ...(admin ? [{ label: 'Volunteers', icon: 'users', screen: 'Volunteers', active: ['Volunteers', 'AdminVolunteers'] }] : []),
+    { label: 'Profile', icon: 'user', screen: 'Profile', active: ['Profile'] }
+  ];
+  return <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 12) }]}>{tabs.map(tab => {
+    const selected = tab.active.includes(route.name);
+    return <TouchableOpacity key={tab.label} accessibilityRole="button" accessibilityLabel={tab.label} accessibilityState={{ selected }} onPress={() => navigation.navigate(tab.screen)} style={styles.tab}>
+      <View style={[styles.icon, selected && styles.selected]}><Feather name={tab.icon} size={21} color={selected ? colors.primary : colors.muted}/></View>
+      <Text style={[styles.label, selected && { color: colors.primary, fontWeight: '700' }]}>{tab.label}</Text>
+    </TouchableOpacity>;
+  })}</View>;
+}
 const styles = StyleSheet.create({
-  navbarContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    justifyContent: 'space-around',
-    paddingVertical: 30, //increased because too short for iOS screens
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navText: {
-    color: '#4F4F4F',
-    fontSize: 12,
-  },
+  bar: { flexDirection: 'row', backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 10, justifyContent: 'space-around' },
+  tab: { flex: 1, alignItems: 'center', gap: 4 }, icon: { paddingVertical: 6, paddingHorizontal: 20, borderRadius: 20 }, selected: { backgroundColor: colors.soft }, label: { fontSize: 10, fontWeight: '500', color: colors.muted }
 });
-
-export default Navbar;

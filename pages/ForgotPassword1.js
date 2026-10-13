@@ -1,3 +1,4 @@
+import { colors, card, field, button } from '../components/ui';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
@@ -57,7 +58,7 @@ export default function ForgotPassword1({navigation}) {
         </SafeAreaView>
     );
 };
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'flex-start',
@@ -107,4 +108,15 @@ const styles = StyleSheet.create({
     backButton: {
         marginTop: "5%",
     },
+});
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background, marginLeft: 0, marginRight: 0, paddingHorizontal: 24 },
+  forgotPasswordText: { ...originalStyles.forgotPasswordText, fontSize: 32, fontWeight: "700", color: colors.ink, letterSpacing: -0.7, marginTop: 50 },
+  text1: { ...originalStyles.text1, fontSize: 15, lineHeight: 24, color: colors.muted },
+  text2: { ...originalStyles.text2, color: colors.ink, fontSize: 13, fontWeight: "600", paddingTop: 28 },
+  textInput: { ...originalStyles.textInput, ...field, height: 54, borderBottomWidth: 1 },
+  resetButton: { ...originalStyles.resetButton, ...button, height: 54 },
+  buttonText: { ...originalStyles.buttonText, fontSize: 16, fontWeight: "600" },
+  backButton: { ...originalStyles.backButton, marginTop: 64 }
 });

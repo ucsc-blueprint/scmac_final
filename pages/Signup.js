@@ -1,3 +1,4 @@
+import { colors, field, button } from '../components/ui';
 import React from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import {signup} from "./api/users.js";
@@ -64,9 +65,9 @@ export default function Signup({navigation, expoPushToken}) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-     <TouchableOpacity style={{marginTop: "20%"}} onPress={()=>navigation.navigate("Login")}>
-                <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
+    <ScrollView style={{ backgroundColor: colors.background }} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.container}>
+     <TouchableOpacity style={{marginTop: 60}} onPress={()=>navigation.navigate("Login")}>
+                <AntDesign name="leftcircleo" size={30} color={colors.primary} />
             </TouchableOpacity>
       <Text style={styles.signUp}>Sign Up</Text>
       <TouchableOpacity 
@@ -218,76 +219,10 @@ export default function Signup({navigation, expoPushToken}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: -300,
-    alignItems: 'flex-start',
-    paddingLeft: 25,
-    paddingRight: 25,
-    // marginBottom: '80%'
-  },
-  backButton: {
-    marginTop: 80,
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    borderWidth: 2.5,
-    borderColor: '#A3A3A3',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  signUp: {
-    paddingTop: 35,
-    paddingBottom: 35,
-    fontWeight: "600",
-    fontSize: 30,
-    color: '#6A466C',
-    textAlign: 'left'
-  },
-  input: {
-    height: 40,
-    width: 333,
-    borderColor: '#232323',
-    paddingHorizontal: 10,
-    fontSize: 18,
-    borderBottomWidth: 1.2
-  },  
-  continueButton: {
-    marginTop: "6%",
-    backgroundColor: '#6A466C',
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 333,
-    height: 44,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: "3%",
-    marginLeft: "1%"
-  },
-  checkbox: {
-    marginRight: 8,
-  },
-  birthday: {
-    marginTop: "6%",
-    marginBottom: "1%",
-    flexDirection:'row',
-  },
-  eventsButton: {
-    position: 'absolute',
-    right: 25,
-    top: 130,
-    backgroundColor: '#6A466C',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  eventsButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
+  container: { paddingHorizontal: 24, paddingBottom: 48, alignItems: 'stretch' },
+  signUp: { fontSize: 34, fontWeight: '700', color: colors.ink, letterSpacing: -1, paddingTop: 26, paddingBottom: 30 },
+  input: { ...field, width: '100%', marginTop: 8 }, continueButton: { ...button, width: '100%', marginTop: 28 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', padding: 14, marginTop: 8, borderRadius: 12, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  checkbox: { marginRight: 12, borderRadius: 5, borderColor: colors.border }, birthday: { flexDirection: 'row', alignItems: 'center', marginTop: 24, marginBottom: 4 },
+  eventsButton: { position: 'absolute', right: 24, top: 112, backgroundColor: colors.soft, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10 }, eventsButtonText: { color: colors.primary, fontSize: 12, fontWeight: '600' }
 });

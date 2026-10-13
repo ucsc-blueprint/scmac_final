@@ -69,57 +69,57 @@ export default function App() {
         <Stack.Screen name="Events" component={Events} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="ViewEvents" component={ViewEvents} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="IndividualEvent" component={IndividualEvent} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18},
             headerTitle: "Event",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
         <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false}} />
         <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20, fontWeight: "bold"}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18, fontWeight: "bold"},
             headerTitle: "Create Event",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
         <Stack.Screen name="EditEvent" component={EditEventScreen} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18},
             headerTitle: "Edit Event",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
         <Stack.Screen name="AdminIndividualEvent" component={AdminEventDetailScreen} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18},
             headerTitle: "Event",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
         <Stack.Screen name="AdminVolunteers" component={AdminVolunteers} options={{ headerShown: false }} />
         <Stack.Screen name="VoluteerProfile" component={VolunteerProfileAdmin} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18},
             headerTitle: "Volunteer Profile",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
         <Stack.Screen name="ArchivedEvents" component={ArchivedEvents} options={
-          { headerShown: true, 
-            headerStyle: {backgroundColor: "#6A466C", height: 110}, 
-            headerBackTitle: " ", 
-            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+          { headerShown: true,
+            headerStyle: {backgroundColor: "#F7F5F2"},
+            headerBackTitle: " ",
+            headerTitleStyle: {color: "#292333", fontSize: 18},
             headerTitle: "Archived Events",
-            headerTintColor: "white"
+            headerTintColor: "#6A466C"
           }}/>
       </Stack.Navigator>
     </NavigationContainer>
-  ); 
+  );
 }

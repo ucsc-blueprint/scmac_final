@@ -1,3 +1,5 @@
+import { PageHeader, EmptyState } from '../components/ui';
+import { colors, card, field, button } from '../components/ui';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import Navbar from '../components/NavBar';
@@ -88,12 +90,14 @@ export default function Notifications({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Notifications</Text>
+      <PageHeader title="Your updates" subtitle="Stay in the loop with your creative community."/>
       <View style={{ flex: 1 }}>
         <View style={styles.notificationContainer}>
-          <Text style={styles.dateHeader}>Today</Text>
+          <Text style={styles.dateHeader}>RECENT ACTIVITY</Text>
           <FlatList
             data={notifications}
+            contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
+            ListEmptyComponent={<EmptyState icon="bell" title="You’re all caught up" description="Event reminders and community updates will appear here."/>}
             renderItem={renderNotificationItem}
             //keyExtractor={(item) => item.id.toString()} 
             keyExtractor={(item) => item.id}
@@ -108,7 +112,7 @@ export default function Notifications({navigation}) {
   );
 } 
 
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F8F8',
@@ -173,4 +177,17 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: 'lightgray',
   },
+});
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background },
+  notificationContainer: { ...originalStyles.notificationContainer, marginHorizontal: 20 },
+  dateHeader: { ...originalStyles.dateHeader, fontSize: 12, color: colors.muted, fontWeight: "600", letterSpacing: 1, marginLeft: 0, marginBottom: 18 },
+  notification: { ...originalStyles.notification, ...card, padding: 18, marginBottom: 10, flex: 0 },
+  text: { ...originalStyles.text, fontSize: 15, lineHeight: 22, color: colors.ink, fontWeight: "500", flex: 0 },
+  dateTime: { ...originalStyles.dateTime, fontSize: 12, color: colors.muted, marginTop: 6 },
+  separator: { ...originalStyles.separator, height: 0, marginVertical: 0 },
+  imagePlaceholder: { ...originalStyles.imagePlaceholder, width: 38, height: 38, backgroundColor: colors.soft, borderRadius: 12 },
+  notifText: { ...originalStyles.notifText, flex: 1 },
+  button: { ...originalStyles.button, padding: 8 }
 });

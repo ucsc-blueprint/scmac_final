@@ -45,3 +45,11 @@ npm run android
   React Native's old architecture, explicitly retained in `app.json`.
 - Use npm and `package-lock.json` for reproducible installs. `.npmrc` retains legacy
   peer resolution for the app's older third-party libraries.
+
+## Demo UI and rollback
+
+The visual refresh is on `codex/demo-ui`. The previous working UI is preserved on
+`main` at commit `0bb20bb` and the local branch `codex/pre-ui-demo-0bb20bb`.
+With a clean working tree, switch back with `git switch main`, then reload the
+running app by pressing `r` in the Metro terminal. No native rebuild is needed
+for switching between these UI versions.
