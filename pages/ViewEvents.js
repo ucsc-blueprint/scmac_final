@@ -1,3 +1,4 @@
+import { colors, card, field, button } from '../components/ui';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
@@ -101,7 +102,7 @@ export default function ViewEvents({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="leftcircleo" size={30} color="white" />
+          <AntDesign name="leftcircleo" size={27} color={colors.primary} />
         </TouchableOpacity>
         <Text style={styles.headerText}>View All Events</Text>
       </View>
@@ -130,7 +131,7 @@ export default function ViewEvents({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F8F8',
@@ -229,4 +230,17 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
+});
+
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background },
+  header: { ...originalStyles.header, backgroundColor: colors.background, paddingTop: 64, paddingBottom: 24 },
+  headerText: { ...originalStyles.headerText, color: colors.ink, fontSize: 28, fontWeight: "700", letterSpacing: -0.6 },
+  card: { ...originalStyles.card, ...card, padding: 20, marginBottom: 16 },
+  eventTitle: { ...originalStyles.eventTitle, fontSize: 23, fontWeight: "600", letterSpacing: -0.4, color: colors.ink },
+  infoLabel: { ...originalStyles.infoLabel, fontSize: 13, color: colors.muted, width: 80 },
+  infoValue: { ...originalStyles.infoValue, fontSize: 14, color: colors.ink },
+  descriptionText: { ...originalStyles.descriptionText, fontSize: 15, lineHeight: 23, color: colors.muted },
+  eventsList: { ...originalStyles.eventsList, paddingBottom: 110 }
 });

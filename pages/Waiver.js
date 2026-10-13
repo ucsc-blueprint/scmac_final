@@ -1,3 +1,4 @@
+import { colors, card, field, button } from '../components/ui';
 import Checkbox from 'expo-checkbox';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
@@ -315,7 +316,7 @@ export default function Waiver({route, navigation}) {
 
 
 
-const styles = StyleSheet.create({
+const originalStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
     // justifyContent: 'center',
@@ -407,3 +408,21 @@ const styles = StyleSheet.create({
   },
 });
 
+
+const styles = StyleSheet.create({
+  ...originalStyles,
+  container: { ...originalStyles.container, backgroundColor: colors.background, paddingHorizontal: 24, paddingTop: 64, paddingBottom: 48 },
+  headerContainer: { ...originalStyles.headerContainer, width: "100%", flexDirection: "column", alignItems: "flex-start" },
+  headerRight: { ...originalStyles.headerRight, marginTop: 24, marginLeft: 0, alignItems: "center", width: "100%", justifyContent: "space-between" },
+  logo: { ...originalStyles.logo, marginTop: 0, marginRight: 0, width: 220, height: 80, resizeMode: "contain" },
+  inputContainer: { ...originalStyles.inputContainer, width: "44%", marginLeft: 0 },
+  addressText: { ...originalStyles.addressText, fontSize: 10, color: colors.muted, marginRight: 0, marginTop: 8 },
+  scmacEmail: { ...originalStyles.scmacEmail, fontSize: 11, color: colors.primary, marginRight: 0 },
+  title: { ...originalStyles.title, fontSize: 26, color: colors.ink, fontWeight: "700", marginTop: 22 },
+  subtitle: { ...originalStyles.subtitle, fontSize: 16, lineHeight: 23, color: colors.ink, fontWeight: "600" },
+  formContainer: { ...originalStyles.formContainer, width: "100%" },
+  input: { ...originalStyles.input, ...field, height: 52, marginBottom: 16 },
+  formItem: { ...originalStyles.formItem, fontSize: 13, color: colors.muted, marginBottom: 8 },
+  agreementText: { ...originalStyles.agreementText, fontSize: 14, lineHeight: 23, color: colors.muted },
+  submitButton: { ...originalStyles.submitButton, ...button, marginTop: 24 }
+});
