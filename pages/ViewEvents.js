@@ -77,8 +77,8 @@ export default function ViewEvents({ navigation }) {
             // Only add events with valid dates
             if (data.date && !isNaN(data.date)) {
               eventsArray.push({
-                id: doc.id,
-                ...data
+                ...data,
+                id: doc.id
               });
             }
           });

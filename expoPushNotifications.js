@@ -29,7 +29,8 @@ export async function registerForPushNotificationsAsync() {
     token = (await Notifications.getExpoPushTokenAsync({"projectId":Constants.expoConfig.extra.eas.projectId})).data;
     // console.log("Expo push token:", token);
   } else {
-    alert('Must use physical device for Push Notifications');
+    // Remote push tokens are unavailable on simulators.
+    return '';
   }
 
   if (Platform.OS === 'android') {

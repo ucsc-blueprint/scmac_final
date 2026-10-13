@@ -33,7 +33,10 @@
         "projectId": "9be0065d-8936-41a5-a486-345e698e1933"
       }
     },
-    "owner": "scmac"
-  },
-  "owner": "scmac"
+    "owner": "scmac",
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ],
+    "newArchEnabled": false
+  }
 }

@@ -33,26 +33,23 @@ export default function App() {
   const responseListener = useRef();
 
   useEffect(() => {
-    async function fetchData() {
-    await registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    console.log(expoPushToken)
+    let mounted = true;
+    registerForPushNotificationsAsync()
+      .then(token => {
+        if (mounted) setExpoPushToken(token || '');
+      })
+      .catch(error => console.warn('Push notification registration failed:', error));
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
+    notificationListener.current = Notifications.addNotificationReceivedListener(setNotification);
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response);
     });
 
-    // return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    // };
-}
-    fetchData().then(console.log("expo pus: " + expoPushToken));
-    
-
+    return () => {
+      mounted = false;
+      notificationListener.current?.remove();
+      responseListener.current?.remove();
+    };
   }, []);
 
   // persistence: getRfireeactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page

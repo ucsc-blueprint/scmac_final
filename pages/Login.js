@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
@@ -27,7 +26,8 @@ export default function Login({navigation}) {
 
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
       await registerForPushNotificationsAsync().then(async token => {
         setExpoPushToken(token)
 
@@ -58,6 +58,7 @@ export default function Login({navigation}) {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
     });
+    return unsubscribe;
   }, []);
 
 

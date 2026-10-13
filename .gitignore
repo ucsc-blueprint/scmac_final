@@ -3,6 +3,10 @@
 # dependencies
 node_modules/
 ios
+android/
+.idea/
+# npm is the canonical package manager for this project.
+yarn.lock
 
 # Expo
 .expo/
